@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Input</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<div class="container"> 
+    <h2 class="judul">Form Input Donasi</h2>
+    <p class="subjudul">Silahkan Masukkan Data Donasi</p>
+    <br>
+    <table border="1" align="center">
+        <form action="/pages/admin/hasil-form-donasi.php" method="post" enctype="multipart/form-data">
+            <tbody>
+                <tr>
+                    <td>Nama Donasi :</td>
+                    <td><input type="text" name="Nama Donasi" class="form-input" required></td>
+                </tr>
+                <tr>
+                    <td>Deskripsi Donasi :</td>
+                    <td>
+                        <textarea name="Deskripsi Donasi" class="form-input" cols="30" rows="10" required></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Gambaran Donasi :</td>
+                    <td>
+                        <input type="file" name="Gambaran Donasi" class="form-input" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Tanggal Peluncuran Donasi :</td>
+                    <td>
+                        <input type="date" name="Tanggal Donasi" class="form-input" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="2">Jenis Donasi :</td>
+                    <td>
+                        <input type="radio" name="Kategori" class="form-input" value="uang" checked>Uang
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="radio" name="Kategori" class="form-input" value="barang">Barang
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="2">Target Donatur :</td>
+                    <td>
+                        <input type="checkbox" name="Target" class="form-input" value="Dalam Negeri" checked> Dalam Negeri 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" name="Target" class="form-input" value="Luar Negeri"> Luar Negeri
+                    </td>
+                </tr>
+                <tr>
+                    <td>Jumlah Nominal :</td>
+                    <td>
+                        <select name="nominal" class="form-input">
+                            <option value="tingkat pertama">1.000.000 - 5.000.000</option>
+                            <option value="tingkat kedua">5.000.000 - 10.000.000</option>
+                            <option value="tingkat ketiga">10.000.000 - 20.000.000</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="right">
+                        <input type="hidden" class="form-input" value="Sukses" name="status">
+                        <input type="submit" class="form-input" value="Submit" name="submit">
+                        <input type="reset" class="form-input" value="Reset" name="reset">
+                    </td>
+                </tr>
+                <!-- Isian dari Form Telah Selesai -->
+            </tbody>
+            </form>
+    </table>
+    </div>   
+</body>
+</html>

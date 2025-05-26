@@ -1,0 +1,64 @@
+img {
+width: 350px;
+height: 230px;
+flex-direction: column;
+align-items: flex-start;
+gap: 4px;
+flex-shrink: 0;
+border-radius: 10px;
+}
+
+.kate-donasi{
+width: 325px;
+height: 92px;
+flex-shrink: 0;
+color: #000;
+text-align: center;
+font-family: "DM Sans";
+font-size: 25px;
+font-style: normal;
+font-weight: 700;
+line-height: 150px
+}
+
+
+.btn-uang {
+background-color: black; /* Green */
+border: none;
+color: white;
+display: inline-flex;
+padding: 20px 40px;
+justify-content: center;
+align-items: center;
+gap: 10px;
+text-align: center;
+text-decoration: none;
+font-size: 16px;
+border-radius: 12px
+}
+
+.btn-uang:hover {
+background-color: #043873; /* Green */
+color: white;
+}
+
+.btn-barang {
+background-color: black; /* Green */
+border: none;
+color: white;
+display: inline-flex;
+padding: 20px 40px;
+justify-content: center;
+align-items: center;
+gap: 10px;
+text-align: center;
+text-decoration: none;
+font-size: 16px;
+border-radius: 12px
+}
+
+.btn-barang:hover {
+background-color: #043873; /* Green */
+color: white;
+}
+      

@@ -1,0 +1,11 @@
+.navbar-custom {
+    background-color: #003366; 
+}
+.btn-login {
+    background-color: #FFD966; /* Warna kuning */
+    color: black;
+}
+.btn-signup {
+    background-color: #6495ED; /* Warna biru muda */
+    color: white;
+}
