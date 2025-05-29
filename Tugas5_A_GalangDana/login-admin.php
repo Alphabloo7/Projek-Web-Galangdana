@@ -5,8 +5,7 @@
     <title>Login Admin</title>
     <style>
         body {
-            background: #f0f0f0;
-            font-family: Arial;
+            background: url(pages/auth/bg4.png) no-repeat center center/cover !important;
             display: flex;
             justify-content: center;
             align-items: center;

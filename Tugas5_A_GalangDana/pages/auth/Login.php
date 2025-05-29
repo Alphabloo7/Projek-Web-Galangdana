@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 body {
-  background: url(latar.png) no-repeat center center/cover !important;
+  background: url(bg4.png) no-repeat center center/cover !important;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -154,7 +154,7 @@ input {
                 <div class="password-container">
                     <label for="password" class="form-label">Password <a href="#" class="forgot">Forgot?</a></label>
                     <input type="password" id="password" name="password" class="form-input-password" placeholder="Enter your password" required>
-                    <span class="toggle-password">👁️</span>
+                    <span id="togglePassword" style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); cursor: pointer;">👁️</span>
                 </div>
 
                 <button type="submit" class="login-btn">Login</button>
@@ -162,5 +162,19 @@ input {
             <p class="signup-text">Don't Have An Account? <a href="SignupUser.php">Sign Up</a></p>
         </div>
     </div>
+    <script>
+      const togglePassword = document.getElementById('togglePassword');
+      const password = document.getElementById('password');
+
+      togglePassword.addEventListener('click', function () {
+      // Toggle type attribute
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+
+      // Toggle icon (optional)
+      this.textContent = type === 'password' ? '👁️' : '🙈';
+      });
+    </script>
+
 </body>
 </html>

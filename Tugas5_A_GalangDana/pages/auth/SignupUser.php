@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 body {
-  background: url(latar.png) no-repeat center center/cover !important;
+  background: url(bg4.png) no-repeat center center/cover !important;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -68,7 +68,7 @@ body {
 
 .container {
   width: 500px;
-  height: 620px;
+  height: 700px;
   background-color: rgba(209, 207, 207, 0.3);
   backdrop-filter: blur(5px);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
@@ -233,6 +233,10 @@ body {
                 <div class="part-form">
                     <label for="email" class="form-label">Email</label>
                     <input type="text" name="email" id="email" class="form-input-email" placeholder="Enter Your Email" required>
+                </div>
+                <div class="part-form">
+                    <label for="no_telp" class="form-label">Nomor Telepon</label>
+                    <input type="text" name="nama" id="nama" class="form-input-nama" placeholder="Enter Your Phone Number" required>
                 </div>
                 <div class="part-form">
                     <label for="password" class="form-label">Password</label>

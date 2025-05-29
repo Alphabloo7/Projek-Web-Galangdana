@@ -61,12 +61,12 @@
                     <?= htmlspecialchars($_SESSION['nama']); ?>
                 </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="pages/profile.php">Profile</a></li>
+                <li><a class="dropdown-item" href="profile.php">Profile</a></li>
                 <li><a class="dropdown-item" href="pages/auth/logout.php">Logout</a></li>
             </ul>
         </div>
         <?php else: ?>
-            <a href="pages/auth/LoginUser.php" class="btn btn-warning">Login</a>
+            <a href="profile.php" class="btn btn-warning">Login</a>
             <a href="pages/auth/SignupUser.php" class="btn btn-primary">Sign Up</a>
         <?php endif; ?>
       </div>
