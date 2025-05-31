@@ -8,6 +8,9 @@ include '../../koneksi.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nama = $_POST['nama'] ?? '';
     $email = $_POST['email'] ?? '';
+    $username = $_POST['username'] ?? '';
+    $no_telepon = $_POST['no_telepon'] ?? '';
+    $alamat = $_POST['alamat'] ?? '';
     $password = $_POST['password'] ?? '';
     $verify = $_POST['verify-password'] ?? '';
 
@@ -26,11 +29,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             // Hash password
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            $bergabung = date('Y-m-d');
+            $status = "aktif";
 
             // Insert user baru
-            $sql = "INSERT INTO user (nama, email, pass) VALUES (?, ?, ?)";
+            $sql = "INSERT INTO user (nama, email, password, no_telepon, alamat, username, bergabung_user, status_user)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $koneksi->prepare($sql);
-            $stmt->bind_param("sss", $nama, $email, $hashed_password);
+            $stmt->bind_param("ssssssss", $nama, $email, $hashed_password, $no_telepon, $alamat, $username, $bergabung, $status);
 
             if ($stmt->execute()) {
                 $_SESSION['success'] = "Registrasi berhasil! Silakan login.";
@@ -222,32 +228,37 @@ body {
                 <button type="submit" class="button-yayasan"><a href="SignupYayasan.php" class="active-2">Yayasan</a></button>
             </div>
             <form action="#" method="post">
-                <div class="part-form">
-                    <label for="nama" class="form-label">Nama</label>
-                    <input type="text" name="nama" id="nama" class="form-input-nama" placeholder="Your name" required>
-                </div>
-                <div class="part-form">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" name="name" id="username" class="form-input-username" placeholder="Your Username" required>
-                </div>
-                <div class="part-form">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="text" name="email" id="email" class="form-input-email" placeholder="Enter Your Email" required>
-                </div>
-                <div class="part-form">
-                    <label for="no_telp" class="form-label">Nomor Telepon</label>
-                    <input type="text" name="nama" id="nama" class="form-input-nama" placeholder="Enter Your Phone Number" required>
-                </div>
-                <div class="part-form">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" name="password" id="password" class="form-input-password" placeholder="Enter Your Password" required>
-                </div>
-                <div class="part-form">
-                    <label for="verify" class="form-label">Verify Password</label>
-                    <input type="password" name="verify-password" id="verify" class="form-input-password" placeholder="Enter Your Password" required>
-                </div>
-                <button type="submit" class="submit-btn">Create</button>
-            </form>
+              <div class="part-form">
+                  <label for="nama" class="form-label">Nama</label>
+                  <input type="text" name="nama" id="nama" class="form-input-nama" placeholder="Your name" required>
+              </div>
+              <div class="part-form">
+                  <label for="username" class="form-label">Username</label>
+                  <input type="text" name="username" id="username" class="form-input-username" placeholder="Your Username" required>
+              </div>
+              <div class="part-form">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="email" name="email" id="email" class="form-input-email" placeholder="Enter Your Email" required>
+              </div>
+              <div class="part-form">
+                  <label for="no_telepon" class="form-label">Nomor Telepon</label>
+                  <input type="text" name="no_telepon" id="no_telepon" class="form-input-nama" placeholder="Enter Your Phone Number" required>
+              </div>
+              <div class="part-form">
+                  <label for="alamat" class="form-label">Alamat</label>
+                  <input type="text" name="alamat" id="alamat" class="form-input-nama" placeholder="Enter Your Address" required>
+              </div>
+              <div class="part-form">
+                  <label for="password" class="form-label">Password</label>
+                  <input type="password" name="password" id="password" class="form-input-password" placeholder="Enter Your Password" required>
+              </div>
+              <div class="part-form">
+                  <label for="verify" class="form-label">Verify Password</label>
+                  <input type="password" name="verify-password" id="verify" class="form-input-password" placeholder="Enter Your Password" required>
+              </div>
+              <button type="submit" class="submit-btn">Create</button>
+          </form>
+
         </div>
     </div>
 </body>
