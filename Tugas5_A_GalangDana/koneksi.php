@@ -2,7 +2,7 @@
 $host = "localhost";
 $username = "root";
 $password = "1234";
-$database = "mydonate";
+$database = "mydonate2";
 
 $koneksi = new mysqli($host, $username, $password, $database);
 
@@ -22,7 +22,7 @@ if ($result->num_rows == 0) {
     $default_pass = password_hash("admin123", PASSWORD_DEFAULT);
 
     // Gunakan prepared statement
-    $sql = "INSERT INTO user (nama, email, pass) VALUES (?, ?, ?)";
+    $sql = "INSERT INTO user (nama, email, password) VALUES (?, ?, ?)";
     $stmt = $koneksi->prepare($sql);
 
     if ($stmt === false) {

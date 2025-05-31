@@ -79,25 +79,29 @@
 session_start();
 include 'koneksi.php';
 
+$error = ""; // untuk menampilkan pesan error
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
+    $username = $_POST['username']; // isinya email
     $password = $_POST['password'];
 
-    $query = "SELECT * FROM admin WHERE username = ?";
+    $query = "SELECT * FROM admin WHERE email = ?";
     $stmt = $koneksi->prepare($query);
-    $stmt->bind_param("s", $username);
+    $stmt->bind_param("s", $username); // pakai username karena form pakai name="username"
     $stmt->execute();
     $result = $stmt->get_result();
     $admin = $result->fetch_assoc();
 
-    // Jika password tidak di-hash, cukup pakai ($password == $admin['password'])
     if ($admin && $password == $admin['password']) {
-        $_SESSION['admin_id'] = $admin['id'];
-        $_SESSION['username'] = $admin['username'];
-        header("Location: adminutama/dashboard-admin.php"); // arahkan ke dashboard admin
+        // Login berhasil
+        $_SESSION['id_admin'] = $admin['id_admin'];
+        $_SESSION['email'] = $admin['email'];
+        header("Location: adminutama/dashboard-admin.php");
         exit();
     } else {
+        // Login gagal
         $error = "Username atau password salah.";
     }
 }
 ?>
+
