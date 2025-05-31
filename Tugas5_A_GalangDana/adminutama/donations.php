@@ -1,5 +1,7 @@
+<?php include '../koneksi.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,6 +9,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="dashboard-admin.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        .fixed-size-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
@@ -19,66 +29,99 @@
 
                 <div class="row row-cols-1 row-cols-md-3 g-4">
                     <?php
-                    function generateAdminDonationCard($image, $title, $description) {
+                    function generateAdminDonationCard($id, $image, $title, $description, $status)
+                    {
+                        $correctedImagePath = '../' . $image;
                         return '
                         <div class="col">
                             <div class="card shadow-sm h-100">
-                                <img src="'.$image.'" class="card-img-top fixed-size-img" alt="'.$title.'">
+                                <img src="' . htmlspecialchars($correctedImagePath) . '" 
+                                     class="card-img-top fixed-size-img" 
+                                     alt="' . htmlspecialchars($title) . '" 
+                                     onclick="showDonationDetail(' . intval($id) . ')">
                                 <div class="card-body">
-                                    <h5 class="card-title">'.$title.'</h5>
-                                    <p class="card-text">'.substr($description, 0, 100).'...</p>
+                                    <h5 class="card-title">' . htmlspecialchars($title) . '</h5>
+                                    <p class="card-text">' . htmlspecialchars(substr($description, 0, 100)) . '...</p>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="btn-group">
-                                            <button class="btn btn-sm btn-outline-success">Edit</button>
-                                            <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                            <a href="edit_donasi.php?id=' . intval($id) . '" class="btn btn-sm btn-outline-success">Edit</a>
+                                            <a href="delete_donasi.php?id=' . intval($id) . '" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'Yakin ingin menghapus donasi ini?\')">Delete</a>
                                         </div>
-                                        <small class="text-muted">Active</small>
+                                        <small class="text-muted">' . htmlspecialchars($status) . '</small>
                                     </div>
                                 </div>
                             </div>
                         </div>';
                     }
 
-                    echo generateAdminDonationCard(
-                        "images/OpenDonation1.png",
-                        "Banjir di Kabupaten Bandung",
-                        "Masyarakat Kabupaten Bandung memerlukan bantuan Anda untuk penanganan krisis setelah banjir..."
-                    );
-                    
-                    echo generateAdminDonationCard(
-                        "images/OpenDonation2.png",
-                        "Tsunami di Aceh",
-                        "Peringatan! Tsunami dahsyat telah melanda Aceh pada 26 Desember 2004, menyebabkan lebih dari 170.000 korban jiwa. Mari bantu saudara-saudara kita yang terdampak."
-                    );
-                    
-                    echo generateAdminDonationCard(
-                        "images/OpenDonation3.png",
-                        "Krisis Air Bersih di Sekolah Indonesia",
-                        "Peringatan! Sebanyak 3,1 juta siswa di Indonesia belum memiliki akses ke air bersih di sekolah mereka. Mari bantu anak-anak kita mendapatkan fasilitas air bersih yang layak."
-                    );
-                    
-                    echo generateAdminDonationCard(
-                        "images/OpenDonation4.png",
-                        "Kebakaran Hutan Kumpeh",
-                        "Hutan di Kecamatan Kumpeh, Muarojambi, Jambi, telah terbakar, mempengaruhi masyarakat sekitar. Mari bantu menyediakan fasilitas kesehatan bagi mereka yang terdampak."
-                    );
-                    echo generateAdminDonationCard(
-                        "images/OpenDonation5.png",
-                        "Gempa Bumi di Tuban",
-                        "Gempa berkekuatan 6,1 skala Richter mengguncang Kabupaten Tuban, Jawa Timur, pada 22 Maret 2024, menyebabkan kerusakan bangunan dan memerlukan bantuan segera. Mari bantu mereka pulih dengan menyediakan makanan dan obat-obatan."
-                    );
-                    
-                    echo generateAdminDonationCard(
-                        "images/OpenDonation6.png",
-                        "Kekeringan di Nusa Tenggara Timur",
-                        "Warga Nusa Tenggara Timur saat ini menderita akibat kekeringan parah, bantu mereka mendapatkan air bersih!"
-                    );
-                    
-                    // Tambahkan 5 donasi lainnya sesuai data landing page
+                    $query = "SELECT * FROM donasi";
+                    $result = mysqli_query($conn, $query);
+
+                    if ($result && mysqli_num_rows($result) > 0) {
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo generateAdminDonationCard(
+                                $row['id_donasi'],
+                                $row['gambar'],
+                                $row['judul_donasi'],
+                                $row['isi_donasi'],
+                                $row['status_donasi']
+                            );
+                        }
+                    } else {
+                        echo '<p class="text-muted">Belum ada donasi di database.</p>';
+                    }
                     ?>
                 </div>
             </div>
         </section>
     </div>
+
+    <!-- Modal -->
+    <div id="donationModal" class="modal fade" tabindex="-1" aria-labelledby="donationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="modalTitle" class="modal-title">Judul Donasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="modalImage" src="" class="img-fluid mb-3" alt="Gambar Donasi">
+                    <p id="modalDescription"></p>
+                    <p><strong>Bentuk Donasi:</strong> <span id="modalBentuk"></span></p>
+                    <p><strong>Target Donasi:</strong> Rp <span id="modalTarget"></span></p>
+                    <p><strong>Tanggal Unggah:</strong> <span id="modalTanggal"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showDonationDetail(id) {
+            fetch('get-donations-detail.php?id_donasi=' + id)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+                    document.getElementById('modalTitle').innerText = data.judul_donasi || 'Judul kosong';
+                    document.getElementById('modalImage').src = data.gambar ? '../' + data.gambar : 'default-image.jpg';
+                    document.getElementById('modalDescription').innerText = data.isi_donasi || '-';
+                    document.getElementById('modalBentuk').innerText = data.bentuk_donasi || '-';
+                    document.getElementById('modalTarget').innerText = data.target_donasi ? Number(data.target_donasi).toLocaleString('id-ID') : '0';
+                    document.getElementById('modalTanggal').innerText = data.tgl_unggah || '-';
+
+                    let modal = new bootstrap.Modal(document.getElementById('donationModal'));
+                    modal.show();
+                })
+                .catch(err => {
+                    alert("Gagal mengambil data donasi.");
+                    console.error(err);
+                });
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
