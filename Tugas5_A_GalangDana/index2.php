@@ -1,5 +1,5 @@
 <?php
-    session_start();
+session_start();
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +47,7 @@
             <a class="nav-link text-white" href="#documentation">Documentation</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" href="From-5.php">Apply a Donation</a>
+            <a class="nav-link text-white" href="form-donasi.php">Apply a Donation</a>
           </li>
           <li class="nav-item">
             <a class="nav-link text-white" href="simulasi.php">Simulation</a>
@@ -56,18 +56,18 @@
 
         <!-- Login & Sign Up -->
         <?php if (isset($_SESSION['nama'])): ?>
-        <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    <?= htmlspecialchars($_SESSION['nama']); ?>
-                </button>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <?= htmlspecialchars($_SESSION['nama']); ?>
+            </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="profile.php">Profile</a></li>
-                <li><a class="dropdown-item" href="pages/auth/logout.php">Logout</a></li>
+              <li><a class="dropdown-item" href="profile.php">Profile</a></li>
+              <li><a class="dropdown-item" href="pages/auth/logout.php">Logout</a></li>
             </ul>
-        </div>
+          </div>
         <?php else: ?>
-            <a href="profile.php" class="btn btn-warning">Login</a>
-            <a href="pages/auth/SignupUser.php" class="btn btn-primary">Sign Up</a>
+          <a href="profile.php" class="btn btn-warning">Login</a>
+          <a href="pages/auth/SignupUser.php" class="btn btn-primary">Sign Up</a>
         <?php endif; ?>
       </div>
     </div>
@@ -145,24 +145,26 @@
 
 
       <?php
-// Fungsi untuk mengubah format tanggal
-    function formatDate($dateString) {
-      $date = new DateTime($dateString);
-      return $date->format('F j, Y'); // Contoh: "April 19, 2025"
-    }
+      // Fungsi untuk mengubah format tanggal
+      function formatDate($dateString)
+      {
+        $date = new DateTime($dateString);
+        return $date->format('F j, Y'); // Contoh: "April 19, 2025"
+      }
 
-    // Fungsi untuk menghasilkan kartu donasi dengan tanggal dan waktu yang bisa dikustomisasi
-    function generateDonationCard($image, $title, $description, $customDate = null, $timeAgo = null) {
-      // Jika tanggal custom tidak disediakan, gunakan tanggal hari ini
-      $date = $customDate ? formatDate($customDate) : formatDate('now');
-      
-      // Jika waktu lalu tidak disediakan, gunakan default "9 mins"
-      $timeDisplay = $timeAgo ? $timeAgo : '9 mins';
-      
-      // Batasi deskripsi menjadi 100 karakter
-      $shortDescription = substr($description, 0, 100) . '...';
-      $fullDescription = $description;
-    return "
+      // Fungsi untuk menghasilkan kartu donasi dengan tanggal dan waktu yang bisa dikustomisasi
+      function generateDonationCard($image, $title, $description, $customDate = null, $timeAgo = null)
+      {
+        // Jika tanggal custom tidak disediakan, gunakan tanggal hari ini
+        $date = $customDate ? formatDate($customDate) : formatDate('now');
+
+        // Jika waktu lalu tidak disediakan, gunakan default "9 mins"
+        $timeDisplay = $timeAgo ? $timeAgo : '9 mins';
+
+        // Batasi deskripsi menjadi 100 karakter
+        $shortDescription = substr($description, 0, 100) . '...';
+        $fullDescription = $description;
+        return "
     <div class='col'>
           <div class='card shadow-sm' style='min-height: 500px;'>
               <img src='$image' class='card-img-top' alt='Gambar Deskripsi'>
@@ -185,65 +187,65 @@
           </div>
       </div>
     ";
-}
-?>
+      }
+      ?>
 
-<!-- HTML -->
-<div class="album py-5 bg-body-tertiary">
-    <div class="container">
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+      <!-- HTML -->
+      <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             <?php
             // Sekarang Anda bisa menentukan tanggal dan waktu untuk setiap donasi
             echo generateDonationCard(
-                "images/OpenDonation1.png", 
-                "Banjir di Kabupaten Bandung", 
-                "Masyarakat Kabupaten Bandung memerlukan bantuan Anda untuk penanganan krisis setelah banjir yang merendam empat kecamatan dan menyebabkan ratusan warga mengungsi.",
-                "April 18, 2025",  // Tanggal khusus
-                "2 hours ago"      // Waktu khusus
+              "images/OpenDonation1.png",
+              "Banjir di Kabupaten Bandung",
+              "Masyarakat Kabupaten Bandung memerlukan bantuan Anda untuk penanganan krisis setelah banjir yang merendam empat kecamatan dan menyebabkan ratusan warga mengungsi.",
+              "April 18, 2025",  // Tanggal khusus
+              "2 hours ago"      // Waktu khusus
             );
-            
+
             echo generateDonationCard(
-                "images/OpenDonation2.png", 
-                "Tsunami di Aceh", 
-                "Peringatan! Tsunami dahsyat telah melanda Aceh pada 26 Desember 2004, menyebabkan lebih dari 170.000 korban jiwa. Mari bantu saudara-saudara kita yang terdampak.",
-                "December 26, 2004",  // Tanggal khusus
-                "5 years ago"        // Waktu khusus
+              "images/OpenDonation2.png",
+              "Tsunami di Aceh",
+              "Peringatan! Tsunami dahsyat telah melanda Aceh pada 26 Desember 2004, menyebabkan lebih dari 170.000 korban jiwa. Mari bantu saudara-saudara kita yang terdampak.",
+              "December 26, 2004",  // Tanggal khusus
+              "5 years ago"        // Waktu khusus
             );
-            
+
             echo generateDonationCard(
-                "images/OpenDonation3.png", 
-                "Krisis Air Bersih di Sekolah-sekolah Indonesia", 
-                "Peringatan! Sebanyak 3,1 juta siswa di Indonesia belum memiliki akses ke air bersih di sekolah mereka. Mari bantu anak-anak kita mendapatkan fasilitas air bersih yang layak.",
-                "March 15, 2025",    // Tanggal khusus
-                "1 month ago"        // Waktu khusus
+              "images/OpenDonation3.png",
+              "Krisis Air Bersih di Sekolah-sekolah Indonesia",
+              "Peringatan! Sebanyak 3,1 juta siswa di Indonesia belum memiliki akses ke air bersih di sekolah mereka. Mari bantu anak-anak kita mendapatkan fasilitas air bersih yang layak.",
+              "March 15, 2025",    // Tanggal khusus
+              "1 month ago"        // Waktu khusus
             );
-            
+
             // Donasi tanpa parameter tanggal/waktu akan menggunakan nilai default
             echo generateDonationCard(
-                "images/OpenDonation4.png", 
-                "Kebakaran Hutan Kumpeh", 
-                "Hutan di Kecamatan Kumpeh, Muarojambi, Jambi, telah terbakar, mempengaruhi masyarakat sekitar. Mari bantu menyediakan fasilitas kesehatan bagi mereka yang terdampak."
+              "images/OpenDonation4.png",
+              "Kebakaran Hutan Kumpeh",
+              "Hutan di Kecamatan Kumpeh, Muarojambi, Jambi, telah terbakar, mempengaruhi masyarakat sekitar. Mari bantu menyediakan fasilitas kesehatan bagi mereka yang terdampak."
             );
-            
+
             echo generateDonationCard(
-                "images/OpenDonation5.png", 
-                "Gempa Bumi di Tuban", 
-                "Gempa berkekuatan 6,1 skala Richter mengguncang Kabupaten Tuban, Jawa Timur, pada 22 Maret 2024, menyebabkan kerusakan bangunan dan memerlukan bantuan segera. Mari bantu mereka pulih dengan menyediakan makanan dan obat-obatan.",
-                "March 22, 2024",     // Tanggal khusus
-                "1 year ago"          // Waktu khusus
+              "images/OpenDonation5.png",
+              "Gempa Bumi di Tuban",
+              "Gempa berkekuatan 6,1 skala Richter mengguncang Kabupaten Tuban, Jawa Timur, pada 22 Maret 2024, menyebabkan kerusakan bangunan dan memerlukan bantuan segera. Mari bantu mereka pulih dengan menyediakan makanan dan obat-obatan.",
+              "March 22, 2024",     // Tanggal khusus
+              "1 year ago"          // Waktu khusus
             );
-            
+
             echo generateDonationCard(
-                "images/OpenDonation6.png", 
-                "Kekeringan di Nusa Tenggara Timur", 
-                "Warga Nusa Tenggara Timur saat ini menderita akibat kekeringan parah, bantu mereka mendapatkan air bersih!",
-                "February 5, 2025",   // Tanggal khusus
-                "2 months ago"        // Waktu khusus
+              "images/OpenDonation6.png",
+              "Kekeringan di Nusa Tenggara Timur",
+              "Warga Nusa Tenggara Timur saat ini menderita akibat kekeringan parah, bantu mereka mendapatkan air bersih!",
+              "February 5, 2025",   // Tanggal khusus
+              "2 months ago"        // Waktu khusus
             );
             ?>
+          </div>
         </div>
-    </div>
-</div>
+      </div>
   </section>
   <!-- End Open Donations -->
 
