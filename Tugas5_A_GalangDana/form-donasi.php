@@ -91,6 +91,8 @@
             </select>
           </div>
           <div class="d-flex justify-content-between">
+            <input type="hidden" name="status" value="Non Active">
+
             <button type="submit" class="btn btn-primary">Submit</button>
             <button type="reset" class="btn btn-warning">Reset</button>
             <a href="index2.php" class="btn btn-secondary">Kembali</a>
