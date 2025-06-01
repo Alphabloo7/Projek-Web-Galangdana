@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Login Admin</title>
@@ -58,21 +59,23 @@
         }
     </style>
 </head>
+
 <body>
-<div class="login-container">
-    <h2>Login Admin</h2>
-    <?php if (!empty($error)) echo "<p class='error'>$error</p>"; ?>
-    <form method="POST" action="">
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username" required>
+    <div class="login-container">
+        <h2>Login Admin</h2>
+        <?php if (!empty($error)) echo "<p class='error'>$error</p>"; ?>
+        <form method="POST" action="">
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" required>
 
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" required>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" required>
 
-        <button type="submit">Login</button>
-    </form>
-</div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
 </body>
+
 </html>
 
 <?php
@@ -86,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     $query = "SELECT * FROM admin WHERE email = ?";
-    $stmt = $koneksi->prepare($query);
+    $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $username); // pakai username karena form pakai name="username"
     $stmt->execute();
     $result = $stmt->get_result();
@@ -104,4 +107,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
-
