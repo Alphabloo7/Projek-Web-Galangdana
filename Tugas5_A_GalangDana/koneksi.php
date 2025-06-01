@@ -1,40 +1,12 @@
 <?php
-$host = "localhost";
-$username = "root";
-$password = "1234";
-$database = "mydonate2";
+$host = "localhost";       // Ganti jika bukan localhost
+$user = "root";            // Username database kamu
+$password = "";            // Password database kamu (kosongkan kalau pakai XAMPP default)
+$database = "mydonate4"; // Ganti dengan nama database kamu
 
-$koneksi = new mysqli($host, $username, $password, $database);
+$conn = new mysqli($host, $user, $password, $database);
 
 // Cek koneksi
-if ($koneksi->connect_error) {
-    die("Koneksi gagal: " . $koneksi->connect_error);
+if ($conn->connect_error) {
+    die("Koneksi database gagal: " . $conn->connect_error);
 }
-
-// Cek apakah user default sudah ada
-$check = "SELECT * FROM user WHERE email = 'admin@admin.com'";
-$result = $koneksi->query($check);
-
-if ($result->num_rows == 0) {
-    // Membuat user default
-    $default_nama = "admin";
-    $default_email = "admin@admin.com";
-    $default_pass = password_hash("admin123", PASSWORD_DEFAULT);
-
-    // Gunakan prepared statement
-    $sql = "INSERT INTO user (nama, email, password) VALUES (?, ?, ?)";
-    $stmt = $koneksi->prepare($sql);
-
-    if ($stmt === false) {
-        die("Prepare failed: " . $koneksi->error);
-    }
-
-    $stmt->bind_param("sss", $default_nama, $default_email, $default_pass);
-
-    if (!$stmt->execute()) {
-        die("Error inserting default user: " . $stmt->error);
-    }
-
-    $stmt->close();
-}
-?>

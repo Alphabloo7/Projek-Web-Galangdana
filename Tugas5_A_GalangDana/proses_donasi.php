@@ -1,51 +1,69 @@
 <?php
-include 'koneksi.php'; // koneksi ke database
+require_once 'koneksi.php'; // koneksi database
 
-$judul     = $_POST['judul'];
-$deskripsi = $_POST['deskripsi'];
-$tanggal   = $_POST['tanggal'];
-$jenis     = $_POST['jenis'];
-$target    = isset($_POST['target']) ? implode(", ", $_POST['target']) : '';
-$nominal   = $_POST['nominal'];
-
-// Upload Gambar
-$namaFile  = $_FILES['gambar']['name'];
-$tmpName   = $_FILES['gambar']['tmp_name'];
-$folder    = "uploads/";
-
-if (!file_exists($folder)) {
-    mkdir($folder, 0777, true); // buat folder jika belum ada
-}
-
-$uploadPath = $folder . basename($namaFile);
-
-if (move_uploaded_file($tmpName, $uploadPath)) {
-    // Simpan ke database
-    $sql = "INSERT INTO form_donasi (judul, deskripsi, gambar, tanggal, jenis, target, nominal) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
-    $stmt = $koneksi->prepare($sql);
-    $stmt->bind_param("sssssss", $judul, $deskripsi, $namaFile, $tanggal, $jenis, $target, $nominal);
-
-    if ($stmt->execute()) {
-        // Tampilkan popup dan redirect
-        echo "<script>
-                alert('Donasi berhasil disimpan!');
-                window.location.href = 'From-5.php';
-              </script>";
-    } else {
-        echo "<script>
-                alert('Gagal menyimpan data: " . addslashes($stmt->error) . "');
-                window.history.back();
-              </script>";
+function uploadGambar($file)
+{
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
+        return null;
     }
 
-    $stmt->close();
-} else {
-    echo "<script>
-            alert('Gagal mengupload gambar.');
-            window.history.back();
-          </script>";
+    if (!in_array($file['type'], $allowedTypes)) {
+        die("Tipe file tidak diperbolehkan.");
+    }
+
+    if ($file['size'] > 2 * 1024 * 1024) {
+        die("Ukuran file terlalu besar.");
+    }
+
+    $uploadDir = 'uploads/';
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0755, true);
+    }
+
+    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $targetFile = $uploadDir . time() . '_' . uniqid() . '.' . $ext;
+
+    if (move_uploaded_file($file['tmp_name'], $targetFile)) {
+        return $targetFile;
+    } else {
+        die("Gagal upload gambar.");
+    }
 }
 
-$koneksi->close();
-?>
+// Ambil dan validasi data form
+$judul_donasi = trim($_POST['judul_donasi'] ?? '');
+$tgl_unggah = $_POST['tgl_unggah'] ?? date('Y-m-d');
+$isi_donasi = trim($_POST['isi_donasi'] ?? '');
+$target_donasi = floatval($_POST['target_donasi'] ?? 0);
+$bentuk_arr = $_POST['bentuk'] ?? [];
+$id_kategori = intval($_POST['id_kategori'] ?? 0);
+$status_donasi = 'active';
+
+if (empty($judul_donasi) || empty($isi_donasi) || $target_donasi <= 0 || $id_kategori <= 0) {
+    die("Data tidak lengkap atau tidak valid.");
+}
+
+$bentuk_donasi = implode(',', $bentuk_arr);
+$gambar = uploadGambar($_FILES['gambar'] ?? null);
+
+// Prepare dan eksekusi query
+$sql = "INSERT INTO donasi (judul_donasi, tgl_unggah, isi_donasi, target_donasi, gambar, bentuk_donasi, id_kategori, status_donasi) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+$stmt = $conn->prepare($sql);
+
+if (!$stmt) {
+    die("Prepare statement gagal: " . $conn->error);
+}
+
+$stmt->bind_param("sssissis", $judul_donasi, $tgl_unggah, $isi_donasi, $target_donasi, $gambar, $bentuk_donasi, $id_kategori, $status_donasi);
+
+if ($stmt->execute()) {
+    echo "Donasi berhasil disimpan!";
+    // redirect kalau perlu: header("Location: index2.php"); exit;
+} else {
+    echo "Gagal menyimpan donasi: " . $stmt->error;
+}
+
+$stmt->close();
+$conn->close();
