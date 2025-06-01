@@ -184,7 +184,7 @@ session_start();
       }
 
       // Ambil data donasi aktif dari database
-      $sql = "SELECT * FROM donasi WHERE status_donasi = 'aktif' ORDER BY tgl_unggah DESC LIMIT 6";
+      $sql = "SELECT * FROM donasi WHERE status_donasi = 'active' ORDER BY tgl_unggah";
       $result = $conn->query($sql);
 
       if ($result->num_rows > 0) {
