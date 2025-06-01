@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     $query = "SELECT * FROM user WHERE email = ?";
-    $stmt = $koneksi->prepare($query);
+    $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -53,7 +53,7 @@ body {
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(5px);
   width: 400px;
-  height: 350px;
+  height: 370px;
   text-align: center;
 }
 

@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         // Cek apakah email sudah terdaftar
         $check_email = "SELECT * FROM user WHERE email = ?";
-        $stmt_check = $koneksi->prepare($check_email);
+        $stmt_check = $conn->prepare($check_email);
         $stmt_check->bind_param("s", $email);
         $stmt_check->execute();
         $result = $stmt_check->get_result();
@@ -30,12 +30,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Hash password
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             $bergabung = date('Y-m-d');
-            $status = "aktif";
+            $valid_statuses = ['Active', 'Non Active', 'Banned'];
+            $status = "Active";
+
+            if (!in_array($status, $valid_statuses)) {
+              die("Status tidak valid!");
+            }
 
             // Insert user baru
             $sql = "INSERT INTO user (nama, email, password, no_telepon, alamat, username, bergabung_user, status_user)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $koneksi->prepare($sql);
+            $stmt = $conn->prepare($sql);
             $stmt->bind_param("ssssssss", $nama, $email, $hashed_password, $no_telepon, $alamat, $username, $bergabung, $status);
 
             if ($stmt->execute()) {
@@ -74,7 +79,7 @@ body {
 
 .container {
   width: 500px;
-  height: 700px;
+  height: 750px;
   background-color: rgba(209, 207, 207, 0.3);
   backdrop-filter: blur(5px);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
