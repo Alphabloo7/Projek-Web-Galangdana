@@ -13,7 +13,7 @@ if (empty($paket) || empty($metode) || $total <= 0) {
     exit;
 }
 
-$stmt = $koneksi->prepare("INSERT INTO transaksi (paket, total, metode_pembayaran) VALUES (?, ?, ?)");
+$stmt = $conn->prepare("INSERT INTO transaksi (paket, total, metode_pembayaran) VALUES (?, ?, ?)");
 $stmt->bind_param("sis", $paket, $total, $metode);
 
 if ($stmt->execute()) {
@@ -23,5 +23,5 @@ if ($stmt->execute()) {
 }
 
 $stmt->close();
-$koneksi->close();
+$conn->close();
 ?>
