@@ -145,107 +145,71 @@ session_start();
 
 
       <?php
-      // Fungsi untuk mengubah format tanggal
+      // Panggil koneksi dari file eksternal
+      include 'koneksi.php';
+
       function formatDate($dateString)
       {
         $date = new DateTime($dateString);
-        return $date->format('F j, Y'); // Contoh: "April 19, 2025"
+        return $date->format('F j, Y');
       }
 
-      // Fungsi untuk menghasilkan kartu donasi dengan tanggal dan waktu yang bisa dikustomisasi
-      function generateDonationCard($image, $title, $description, $customDate = null, $timeAgo = null)
+      function generateDonationCard($id, $image, $title, $description, $date, $timeAgo, $donationCount = 0)
       {
-        // Jika tanggal custom tidak disediakan, gunakan tanggal hari ini
-        $date = $customDate ? formatDate($customDate) : formatDate('now');
-
-        // Jika waktu lalu tidak disediakan, gunakan default "9 mins"
-        $timeDisplay = $timeAgo ? $timeAgo : '9 mins';
-
-        // Batasi deskripsi menjadi 100 karakter
         $shortDescription = substr($description, 0, 100) . '...';
         $fullDescription = $description;
         return "
     <div class='col'>
-          <div class='card shadow-sm' style='min-height: 500px;'>
-              <img src='$image' class='card-img-top' alt='Gambar Deskripsi'>
-              <div class='card-body'>
-                  <div class='d-flex justify-content-between'>
-                      <small class='text-muted'>$date</small>
-                      <a href='#' class='text-primary text-decoration-none fw-bold'>" . rand(100, 600) . " donations</a>
-                  </div>
-                  <h5 class='fw-bold text-dark mt-1'>$title</h5>
-                  <p class='card-text short-description'>$shortDescription</p>
-                  <p class='card-text full-description' style='display: none;'>$fullDescription</p>
-                  <button class='btn btn-sm btn-outline-secondary toggle-description'>Baca Selengkapnya</button>
-                  <div class='d-flex justify-content-between align-items-center mt-3'>
-                      <div class='btn-group'>
-                  <a href='percobaan.php' class='btn btn-sm btn-outline-success text-decoration-none'>Donate</a>
-              </div>
-              <small class='text-body-secondary'>$timeDisplay</small>
-                  </div>
-              </div>
+      <div class='card shadow-sm' style='min-height: 500px;'>
+        <img src='$image' class='card-img-top' alt='Gambar Deskripsi'>
+        <div class='card-body'>
+          <div class='d-flex justify-content-between'>
+            <small class='text-muted'>$date</small>
+            <a href='#' class='text-primary text-decoration-none fw-bold'>{$donationCount} donations</a>
           </div>
-      </div>
-    ";
-      }
-      ?>
-
-      <!-- HTML -->
-      <div class="album py-5 bg-body-tertiary">
-        <div class="container">
-          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            <?php
-            // Sekarang Anda bisa menentukan tanggal dan waktu untuk setiap donasi
-            echo generateDonationCard(
-              "images/OpenDonation1.png",
-              "Banjir di Kabupaten Bandung",
-              "Masyarakat Kabupaten Bandung memerlukan bantuan Anda untuk penanganan krisis setelah banjir yang merendam empat kecamatan dan menyebabkan ratusan warga mengungsi.",
-              "April 18, 2025",  // Tanggal khusus
-              "2 hours ago"      // Waktu khusus
-            );
-
-            echo generateDonationCard(
-              "images/OpenDonation2.png",
-              "Tsunami di Aceh",
-              "Peringatan! Tsunami dahsyat telah melanda Aceh pada 26 Desember 2004, menyebabkan lebih dari 170.000 korban jiwa. Mari bantu saudara-saudara kita yang terdampak.",
-              "December 26, 2004",  // Tanggal khusus
-              "5 years ago"        // Waktu khusus
-            );
-
-            echo generateDonationCard(
-              "images/OpenDonation3.png",
-              "Krisis Air Bersih di Sekolah-sekolah Indonesia",
-              "Peringatan! Sebanyak 3,1 juta siswa di Indonesia belum memiliki akses ke air bersih di sekolah mereka. Mari bantu anak-anak kita mendapatkan fasilitas air bersih yang layak.",
-              "March 15, 2025",    // Tanggal khusus
-              "1 month ago"        // Waktu khusus
-            );
-
-            // Donasi tanpa parameter tanggal/waktu akan menggunakan nilai default
-            echo generateDonationCard(
-              "images/OpenDonation4.png",
-              "Kebakaran Hutan Kumpeh",
-              "Hutan di Kecamatan Kumpeh, Muarojambi, Jambi, telah terbakar, mempengaruhi masyarakat sekitar. Mari bantu menyediakan fasilitas kesehatan bagi mereka yang terdampak."
-            );
-
-            echo generateDonationCard(
-              "images/OpenDonation5.png",
-              "Gempa Bumi di Tuban",
-              "Gempa berkekuatan 6,1 skala Richter mengguncang Kabupaten Tuban, Jawa Timur, pada 22 Maret 2024, menyebabkan kerusakan bangunan dan memerlukan bantuan segera. Mari bantu mereka pulih dengan menyediakan makanan dan obat-obatan.",
-              "March 22, 2024",     // Tanggal khusus
-              "1 year ago"          // Waktu khusus
-            );
-
-            echo generateDonationCard(
-              "images/OpenDonation6.png",
-              "Kekeringan di Nusa Tenggara Timur",
-              "Warga Nusa Tenggara Timur saat ini menderita akibat kekeringan parah, bantu mereka mendapatkan air bersih!",
-              "February 5, 2025",   // Tanggal khusus
-              "2 months ago"        // Waktu khusus
-            );
-            ?>
+          <h5 class='fw-bold text-dark mt-1'>$title</h5>
+          <p class='card-text short-description'>$shortDescription</p>
+          <p class='card-text full-description' style='display: none;'>$fullDescription</p>
+          <button class='btn btn-sm btn-outline-secondary toggle-description'>Baca Selengkapnya</button>
+          <div class='d-flex justify-content-between align-items-center mt-3'>
+            <div class='btn-group'>
+              <a href='form_donasi.php?id=$id' class='btn btn-sm btn-outline-success text-decoration-none'>Donate</a>
+            </div>
+            <small class='text-body-secondary'>$timeAgo</small>
           </div>
         </div>
       </div>
+    </div>
+  ";
+      }
+
+      // Ambil data donasi aktif dari database
+      $sql = "SELECT * FROM donasi WHERE status_donasi = 'aktif' ORDER BY tgl_unggah DESC LIMIT 6";
+      $result = $conn->query($sql);
+
+      if ($result->num_rows > 0) {
+        echo '<div class="album py-5 bg-body-tertiary">
+          <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">';
+        while ($row = $result->fetch_assoc()) {
+          echo generateDonationCard(
+            $row['id_donasi'],
+            htmlspecialchars($row['gambar']),
+            htmlspecialchars($row['judul_donasi']),
+            htmlspecialchars($row['isi_donasi']),
+            formatDate($row['tgl_unggah']),
+            "Baru diunggah", // Placeholder; bisa kamu ubah ke fungsi waktu nyata seperti "2 hari lalu"
+            0 // Donation count dummy
+          );
+        }
+        echo '</div></div></div>';
+      } else {
+        echo "<p class='text-center'>No donations found.</p>";
+      }
+
+      $conn->close();
+      ?>
+    </div>
   </section>
   <!-- End Open Donations -->
 
