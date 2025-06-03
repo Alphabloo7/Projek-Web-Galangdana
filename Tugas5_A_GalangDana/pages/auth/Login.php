@@ -14,14 +14,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $user = $result->fetch_assoc();
 
   if ($user && password_verify($password, $user['password'])) {
+    $_SESSION['nama'] = $user['nama'];
     $_SESSION['id_user'] = $user['id_user'];
     $_SESSION['email'] = $user['email'];
     header("Location: ../../index2.php"); // Ganti ke halaman landing sesuai punyamu
     exit();
-  }
-  /* else {
+  } else {
     $error = "Data yang Anda masukkan salah.";
-  } */
+  }
 }
 ?>
 
@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
   <div class="container">
     <div class="login-box">
-      <h2>Login User</h2>
+      <h2>Login</h2>
       <?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
       <form method="POST" action="#">
         <label for="email" class="form-label">Email</label>

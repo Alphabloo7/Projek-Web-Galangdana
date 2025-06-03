@@ -65,7 +65,7 @@
         <h2>Login Admin</h2>
         <?php if (!empty($error)) echo "<p class='error'>$error</p>"; ?>
         <form method="POST" action="">
-            <label for="username">Username</label>
+            <label for="username">Email</label>
             <input type="text" name="username" id="username" required>
 
             <label for="password">Password</label>

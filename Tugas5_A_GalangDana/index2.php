@@ -65,7 +65,7 @@ session_start();
               <li><a class="dropdown-item" href="pages/auth/logout.php">Logout</a></li>
             </ul>
           </div>
-        <?php else: ?>
+       <?php else: ?>
           <a href="profile.php" class="btn btn-warning">Login</a>
           <a href="pages/auth/SignupUser.php" class="btn btn-primary">Sign Up</a>
         <?php endif; ?>
@@ -173,14 +173,13 @@ session_start();
           <button class='btn btn-sm btn-outline-secondary toggle-description'>Baca Selengkapnya</button>
           <div class='d-flex justify-content-between align-items-center mt-3'>
             <div class='btn-group'>
-              <a href='form_donasi.php?id=$id' class='btn btn-sm btn-outline-success text-decoration-none'>Donate</a>
+              <a href='percobaan.php?id=$id' class='btn btn-sm btn-outline-success text-decoration-none'>Donate</a>
             </div>
             <small class='text-body-secondary'>$timeAgo</small>
           </div>
         </div>
       </div>
-    </div>
-  ";
+    </div>";
       }
 
       // Ambil data donasi aktif dari database
@@ -198,8 +197,7 @@ session_start();
             htmlspecialchars($row['judul_donasi']),
             htmlspecialchars($row['isi_donasi']),
             formatDate($row['tgl_unggah']),
-            "Baru diunggah", // Placeholder; bisa kamu ubah ke fungsi waktu nyata seperti "2 hari lalu"
-            0 // Donation count dummy
+            "Baru diunggah",
           );
         }
         echo '</div></div></div>';

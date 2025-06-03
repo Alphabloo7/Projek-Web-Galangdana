@@ -45,7 +45,7 @@
                 </a>
             </li>
             <li class="nav-item mt-4">
-                <a class="btn btn-danger" href="logout.php">
+                <a class="btn btn-danger" href="../index.php"> 
                     <i class="fas fa-sign-out-alt me-2"></i> Logout
                 </a>
             </li>
