@@ -55,11 +55,12 @@ if (!$stmt) {
 $stmt->bind_param("sssissis", $judul_donasi, $tgl_unggah, $isi_donasi, $target_donasi, $gambar, $bentuk_donasi, $id_kategori, $status_donasi);
 
 if ($stmt->execute()) {
-    echo "Donasi berhasil disimpan!";
-    // redirect kalau perlu: header("Location: index2.php"); exit;
-} else {
-    echo "Gagal menyimpan donasi: " . $stmt->error;
-}
+    $_SESSION['success'] = "Donasi berhasil diunggah!";
+    header("Location: index2.php");
+    exit();
+  } else {
+    $error = "Error: " . $stmt->error;
+  }
 
 $stmt->close();
 $conn->close();

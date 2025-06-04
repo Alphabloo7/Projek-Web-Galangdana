@@ -6,7 +6,7 @@
     <title>Login Admin</title>
     <style>
         body {
-            background: url(pages/auth/bg4.png) no-repeat center center/cover !important;
+            background: url(images/bg6.jpg) no-repeat center center/cover !important;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -14,6 +14,7 @@
         }
 
         .login-container {
+            background: url(images/bg4.png) no-repeat center center/cover !important;
             background: white;
             padding: 25px 30px;
             border-radius: 8px;
