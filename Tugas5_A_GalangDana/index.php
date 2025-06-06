@@ -104,6 +104,7 @@
   <!-- End About Us -->
 
 
+
   <!-- Start Open Donations -->
   <section id="open-donations" class="pb-5">
     <div class="container">
@@ -125,61 +126,69 @@
 
 
       <?php
-// Fungsi untuk menghasilkan kartu donasi dengan parameter tambahan untuk tanggal dan waktu
-function generateDonationCard($image, $title, $description, $date = null, $timeAgo = null)
-{
-    // Jika tanggal tidak disediakan, gunakan tanggal saat ini
-    $displayDate = $date ?: date('F j, Y');
-    // Jika waktu tidak disediakan, gunakan nilai default "9 mins"
-    $displayTime = $timeAgo ?: '9 mins';
-    // Jumlah donasi tetap acak antara 100-600
-    $donations = rand(100, 600);
+      // Panggil koneksi dari file eksternal
+      include 'koneksi.php';
 
-    // Batasi deskripsi menjadi 100 karakter
-    $shortDescription = substr($description, 0, 100) . '...';
-    $fullDescription = $description;
-
-    return "
-    <div class='col'>
-            <div class='card shadow-sm' style='min-height: 500px;'>
-                <img src='$image' class='card-img-top' alt='Gambar Deskripsi'>
-                <div class='card-body'>
-                    <div class='d-flex justify-content-between'>
-                        <small class='text-muted'>$date</small>
-                        <a href='#' class='text-primary text-decoration-none fw-bold'>$donations donations</a>
-                    </div>
-                    <h5 class='fw-bold text-dark mt-1'>$title</h5>
-                    <p class='card-text short-description'>$shortDescription</p>
-                    <p class='card-text full-description' style='display: none;'>$fullDescription</p>
-                    <button class='btn btn-sm btn-outline-secondary toggle-description'>Baca Selengkapnya</button>
-                    <div class='d-flex justify-content-between align-items-center mt-3'>
-                        <div class='btn-group'>
-                    <a href='percobaan.php' class='btn btn-sm btn-outline-success text-decoration-none'>Donate</a>
-                </div>
-                <small class='text-body-secondary'>9 mins</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-      ";
+      function formatDate($dateString)
+      {
+        $date = new DateTime($dateString);
+        return $date->format('F j, Y');
       }
-      ?>
 
-      <!-- HTML -->
-      <div class="album py-5 bg-body-tertiary">
-        <div class="container">
-          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            <?php
-            echo generateDonationCard("images/OpenDonation1.png", "Banjir di Kabupaten Bandung", "Masyarakat Kabupaten Bandung memerlukan bantuan Anda untuk penanganan krisis setelah banjir yang merendam empat kecamatan dan menyebabkan ratusan warga mengungsi.");
-            echo generateDonationCard("images/OpenDonation2.png", "Tsunami di Aceh", "Peringatan! Tsunami dahsyat telah melanda Aceh pada 26 Desember 2004, menyebabkan lebih dari 170.000 korban jiwa. Mari bantu saudara-saudara kita yang terdampak.");
-            echo generateDonationCard("images/OpenDonation3.png", "Krisis Air Bersih di Sekolah Indonesia", "Peringatan! Sebanyak 3,1 juta siswa di Indonesia belum memiliki akses ke air bersih di sekolah mereka. Mari bantu anak-anak kita mendapatkan fasilitas air bersih yang layak.");
-            echo generateDonationCard("images/OpenDonation4.png", "Kebakaran Hutan Kumpeh", "Hutan di Kecamatan Kumpeh, Muarojambi, Jambi, telah terbakar, mempengaruhi masyarakat sekitar. Mari bantu menyediakan fasilitas kesehatan bagi mereka yang terdampak.");
-            echo generateDonationCard("images/OpenDonation5.png", "Gempa Bumi di Tuban", "Gempa berkekuatan 6,1 skala Richter mengguncang Kabupaten Tuban, Jawa Timur, pada 22 Maret 2024, menyebabkan kerusakan bangunan dan memerlukan bantuan segera. Mari bantu mereka pulih dengan menyediakan makanan dan obat-obatan.");
-            echo generateDonationCard("images/OpenDonation6.png", "Kekeringan di Nusa Tenggara Timur", "Warga Nusa Tenggara Timur saat ini menderita akibat kekeringan parah, bantu mereka mendapatkan air bersih!");
-            ?>
+      function generateDonationCard($id, $image, $title, $description, $date, $timeAgo, $donationCount = 0)
+      {
+        $shortDescription = substr($description, 0, 100) . '...';
+        $fullDescription = $description;
+        return "
+    <div class='col'>
+      <div class='card shadow-sm' style='min-height: 500px;'>
+        <img src='$image' class='card-img-top' alt='Gambar Deskripsi'>
+        <div class='card-body'>
+          <div class='d-flex justify-content-between'>
+            <small class='text-muted'>$date</small>
+            <a href='#' class='text-primary text-decoration-none fw-bold'>{$donationCount} donations</a>
+          </div>
+          <h5 class='fw-bold text-dark mt-1'>$title</h5>
+          <p class='card-text short-description'>$shortDescription</p>
+          <p class='card-text full-description' style='display: none;'>$fullDescription</p>
+          <button class='btn btn-sm btn-outline-secondary toggle-description'>Baca Selengkapnya</button>
+          <div class='d-flex justify-content-between align-items-center mt-3'>
+            <div class='btn-group'>
+              <a href='pages/auth/Login.php?id=$id' class='btn btn-sm btn-outline-success text-decoration-none'>Donate</a>
+            </div>
+            <small class='text-body-secondary'>$timeAgo</small>
           </div>
         </div>
       </div>
+    </div>
+  ";
+      }
+
+      // Ambil data donasi aktif dari database
+      $sql = "SELECT * FROM donasi WHERE status_donasi = 'active' ORDER BY tgl_unggah";
+      $result = $conn->query($sql);
+
+      if ($result->num_rows > 0) {
+        echo '<div class="album py-5 bg-body-tertiary">
+          <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">';
+        while ($row = $result->fetch_assoc()) {
+          echo generateDonationCard(
+            $row['id_donasi'],
+            htmlspecialchars($row['gambar']),
+            htmlspecialchars($row['judul_donasi']),
+            htmlspecialchars($row['isi_donasi']),
+            formatDate($row['tgl_unggah']),
+            "Baru diunggah",
+          );
+        }
+        echo '</div></div></div>';
+      } else {
+        echo "<p class='text-center'>No donations found.</p>";
+      }
+
+      $conn->close();
+      ?>
     </div>
   </section>
   <!-- End Open Donations -->
@@ -296,51 +305,54 @@ function generateDonationCard($image, $title, $description, $date = null, $timeA
 
   <!-- JavaScript Internal -->
   <style>
-  /* Hanya mempengaruhi tombol dalam section Documentation */
-  #documentation .card-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 150px; /* Sesuaikan dengan kebutuhan */
-  }
-
-  #documentation .toggle-text {
-    font-size: 14px; /* Perkecil ukuran tombol */
-    padding: 5px 10px;
-  }
-
-  #documentation .text-body-secondary {
-    font-size: 12px; /* Perkecil ukuran tanggal */
-  }
-</style>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const documentationSection = document.querySelector("#documentation");
-    if (documentationSection) {
-      const toggleButtons = documentationSection.querySelectorAll(".toggle-text");
-
-      toggleButtons.forEach(button => {
-        button.addEventListener("click", function(e) {
-          e.preventDefault();
-          const cardBody = this.closest(".card-body");
-          const shortText = cardBody.querySelector(".short-text");
-          const fullText = cardBody.querySelector(".full-text");
-
-          if (shortText.style.display === "none") {
-            shortText.style.display = "-webkit-box";
-            fullText.style.display = "none";
-            this.textContent = "Baca Selengkapnya";
-          } else {
-            shortText.style.display = "none";
-            fullText.style.display = "block";
-            this.textContent = "Tampilkan Lebih Sedikit";
-          }
-        });
-      });
+    /* Hanya mempengaruhi tombol dalam section Documentation */
+    #documentation .card-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 150px;
+      /* Sesuaikan dengan kebutuhan */
     }
-  });
-</script>
+
+    #documentation .toggle-text {
+      font-size: 14px;
+      /* Perkecil ukuran tombol */
+      padding: 5px 10px;
+    }
+
+    #documentation .text-body-secondary {
+      font-size: 12px;
+      /* Perkecil ukuran tanggal */
+    }
+  </style>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const documentationSection = document.querySelector("#documentation");
+      if (documentationSection) {
+        const toggleButtons = documentationSection.querySelectorAll(".toggle-text");
+
+        toggleButtons.forEach(button => {
+          button.addEventListener("click", function(e) {
+            e.preventDefault();
+            const cardBody = this.closest(".card-body");
+            const shortText = cardBody.querySelector(".short-text");
+            const fullText = cardBody.querySelector(".full-text");
+
+            if (shortText.style.display === "none") {
+              shortText.style.display = "-webkit-box";
+              fullText.style.display = "none";
+              this.textContent = "Baca Selengkapnya";
+            } else {
+              shortText.style.display = "none";
+              fullText.style.display = "block";
+              this.textContent = "Tampilkan Lebih Sedikit";
+            }
+          });
+        });
+      }
+    });
+  </script>
 
 
 

@@ -12,10 +12,6 @@ function uploadGambar($file)
         die("Tipe file tidak diperbolehkan.");
     }
 
-    if ($file['size'] > 2 * 1024 * 1024) {
-        die("Ukuran file terlalu besar.");
-    }
-
     $uploadDir = 'uploads/';
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0755, true);
@@ -38,7 +34,7 @@ $isi_donasi = trim($_POST['isi_donasi'] ?? '');
 $target_donasi = floatval($_POST['target_donasi'] ?? 0);
 $bentuk_arr = $_POST['bentuk'] ?? [];
 $id_kategori = intval($_POST['id_kategori'] ?? 0);
-$status_donasi = 'active';
+$status_donasi = 'Non Active';
 
 if (empty($judul_donasi) || empty($isi_donasi) || $target_donasi <= 0 || $id_kategori <= 0) {
     die("Data tidak lengkap atau tidak valid.");
