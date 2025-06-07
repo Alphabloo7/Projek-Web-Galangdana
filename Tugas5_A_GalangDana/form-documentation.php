@@ -18,6 +18,7 @@
     .card-body{
       background: url(images/bg4.png) no-repeat center center/cover !important;
       border-radius: 5px;
+      border: none;
     }
   </style>
 </head>

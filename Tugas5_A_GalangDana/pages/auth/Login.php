@@ -41,14 +41,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     body {
-      background: url(bg4.png) no-repeat center center/cover !important;
+      background-image: url(bg6.jpg);
+      background-size: cover;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
-
+    
     .container {
+      background-image: url(bg4.png);
       background: rgba(255, 255, 255, 0.3);
       padding: 20px;
       border-radius: 10px;
