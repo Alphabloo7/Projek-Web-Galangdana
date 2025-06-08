@@ -15,7 +15,7 @@
         <h3 class="text-center text-primary">Form Donasi</h3>
         <p class="text-center text-muted mb-4">Silakan isi data donasi dengan lengkap!</p>
 
-        <form action="proses_donasi.php" method="POST" enctype="multipart/form-data">
+        <form id="form-donasi" action="proses_donasi.php" method="POST" enctype="multipart/form-data">
           <div class="mb-3">
             <label class="form-label">Judul Donasi</label>
             <input type="text" name="judul_donasi" class="form-control" required>
@@ -103,6 +103,33 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- AJAX Script -->
+  <script>
+    const form = document.getElementById('form-donasi');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault(); // cegah submit biasa
+
+      const formData = new FormData(form);
+
+      fetch('proses_donasi.php', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json()) // anggap server balas JSON
+        .then(data => {
+          if (data.success) {
+            // redirect ke landing page jika berhasil
+            window.location.href = 'index2.php';
+          } else {
+            alert('Gagal submit donasi: ' + (data.message || 'Unknown error'));
+          }
+        })
+        .catch(error => {
+          alert('Error saat submit: ' + error);
+        });
+    });
+  </script>
 </body>
 
 </html>

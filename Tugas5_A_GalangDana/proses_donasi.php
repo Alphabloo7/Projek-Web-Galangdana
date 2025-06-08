@@ -1,15 +1,18 @@
 <?php
 require_once 'koneksi.php'; // koneksi database
 
+header('Content-Type: application/json');
+
 function uploadGambar($file)
 {
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
     if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
-        return null;
+        return null; // tidak ada file atau error upload, boleh null
     }
 
     if (!in_array($file['type'], $allowedTypes)) {
-        die("Tipe file tidak diperbolehkan.");
+        echo json_encode(['success' => false, 'message' => "Tipe file tidak diperbolehkan."]);
+        exit;
     }
 
     $uploadDir = 'uploads/';
@@ -23,7 +26,8 @@ function uploadGambar($file)
     if (move_uploaded_file($file['tmp_name'], $targetFile)) {
         return $targetFile;
     } else {
-        die("Gagal upload gambar.");
+        echo json_encode(['success' => false, 'message' => "Gagal upload gambar."]);
+        exit;
     }
 }
 
@@ -37,29 +41,30 @@ $id_kategori = intval($_POST['id_kategori'] ?? 0);
 $status_donasi = 'Non Active';
 
 if (empty($judul_donasi) || empty($isi_donasi) || $target_donasi <= 0 || $id_kategori <= 0) {
-    die("Data tidak lengkap atau tidak valid.");
+    echo json_encode(['success' => false, 'message' => "Data tidak lengkap atau tidak valid."]);
+    exit;
 }
 
 $bentuk_donasi = implode(',', $bentuk_arr);
 $gambar = uploadGambar($_FILES['gambar'] ?? null);
 
-// Prepare dan eksekusi query
 $sql = "INSERT INTO donasi (judul_donasi, tgl_unggah, isi_donasi, target_donasi, gambar, bentuk_donasi, id_kategori, status_donasi) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-$stmt = $conn->prepare($sql);
 
+$stmt = $conn->prepare($sql);
 if (!$stmt) {
-    die("Prepare statement gagal: " . $conn->error);
+    echo json_encode(['success' => false, 'message' => "Prepare statement gagal: " . $conn->error]);
+    exit;
 }
 
 $stmt->bind_param("sssissis", $judul_donasi, $tgl_unggah, $isi_donasi, $target_donasi, $gambar, $bentuk_donasi, $id_kategori, $status_donasi);
 
 if ($stmt->execute()) {
-    echo "Donasi berhasil disimpan!";
-    // redirect kalau perlu: header("Location: index2.php"); exit;
+    echo json_encode(['success' => true, 'message' => 'Donasi berhasil disimpan!']);
 } else {
-    echo "Gagal menyimpan donasi: " . $stmt->error;
+    echo json_encode(['success' => false, 'message' => 'Gagal menyimpan donasi: ' . $stmt->error]);
 }
 
 $stmt->close();
 $conn->close();
+exit;

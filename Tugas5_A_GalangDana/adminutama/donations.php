@@ -16,6 +16,12 @@
             object-fit: cover;
             cursor: pointer;
         }
+
+        .nav-link.active {
+            background-color: #0d6efd;
+            color: #fff !important;
+            border-radius: 5px;
+        }
     </style>
 </head>
 
@@ -25,7 +31,10 @@
     <div class="main-content">
         <section id="donations" class="py-5">
             <div class="container">
-                <h2 class="display-4 fw-bold mb-4">Manage Donations</h2>
+                <h2 class="text-center text-capitalize fw-bold mb-5 pb-3 border-bottom">
+                    Donations
+                </h2>
+
 
                 <?php if (isset($_GET['msg'])): ?>
                     <div id="alertBox" class="alert alert-<?= $_GET['msg'] == 'deleted' ? 'success' : ($_GET['msg'] == 'error' ? 'danger' : 'warning') ?>">

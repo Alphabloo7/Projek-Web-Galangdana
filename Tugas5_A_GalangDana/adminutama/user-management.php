@@ -1,185 +1,182 @@
 <?php
 session_start();
+require '../koneksi.php';
 
-// ================== DATA AWAL USER & MITRA ==================
-// Data ini hanya digunakan untuk inisialisasi session jika kosong
-$initial_users_data = [
-    [
-        'id' => 1,
-        'name' => 'John Doe',
-        'email' => 'john@example.com',
-        'role' => 'User', // Hanya User dan Mitra
-        'banned' => false,
-        'join_date' => '2024-01-15'
-    ],
-    [
-        'id' => 2,
-        'name' => 'Mitra Bantu Jaya', // Nama Mitra lebih deskriptif
-        'email' => 'mitra@example.com',
-        'role' => 'Mitra', // Hanya User dan Mitra
-        'banned' => false,
-        'join_date' => '2023-12-01'
-    ],
-    [
-        'id' => 3,
-        'name' => 'User Aktif Sekali', // Contoh user lain
-        'email' => 'user.aktif@example.com',
-        'role' => 'User', // Hanya User dan Mitra
-        'banned' => false,
-        'join_date' => '2024-02-20'
-    ],
-    [
-        'id' => 4,
-        'name' => 'Mitra Donasi Cepat',
-        'email' => 'mitradonasi@example.com',
-        'role' => 'Mitra',
-        'banned' => true, // Contoh mitra yang sudah terbanned
-        'join_date' => '2023-11-10'
-    ]
-];
-
-// Inisialisasi data pengguna di session jika belum ada
-if (!isset($_SESSION['users'])) {
-    $_SESSION['users'] = $initial_users_data;
-}
-
-// Handle ban/unban action
+// Ban/unban action
 if (isset($_GET['action']) && isset($_GET['id'])) {
     $id = (int)$_GET['id'];
-    $action = $_GET['action'];
+    $action = strtolower($_GET['action']);
 
-    // Loop melalui pengguna di SESSION untuk update
-    foreach ($_SESSION['users'] as &$user_ref) { // Gunakan reference (&) agar perubahan langsung ke array session
-        if ($user_ref['id'] === $id) {
-            // Pastikan role adalah User atau Mitra sebelum melakukan ban/unban
-            if ($user_ref['role'] === 'User' || $user_ref['role'] === 'Mitra') {
-                if ($action === 'ban') {
-                    $user_ref['banned'] = true;
-                } elseif ($action === 'unban') {
-                    $user_ref['banned'] = false;
-                }
-            }
-            break; // User ditemukan dan diproses, keluar dari loop
-        }
+    if ($action === 'ban') {
+        $stmt = $conn->prepare("UPDATE user SET status_user = 'banned' WHERE id_user = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+    } elseif ($action === 'unban') {
+        $stmt = $conn->prepare("UPDATE user SET status_user = 'active' WHERE id_user = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
     }
-    unset($user_ref); // Penting: Hapus referensi setelah loop
 
-    // Redirect untuk membersihkan parameter GET dan mencegah re-submit form
     header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
     exit;
 }
 
-// Data pengguna untuk ditampilkan diambil dari session
-$users_to_display = $_SESSION['users'];
-// ================== BATAS EDIT DATA ==================
+// Ambil data user
+$sql = "SELECT id_user, nama, email, no_telepon, alamat, status_user, bergabung_user FROM user ORDER BY id_user ASC";
+$result = $conn->query($sql);
+
+
+$users = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $users[] = $row;
+    }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>User Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="dashboard-admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="dashboard-admin.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         .user-table th {
             background-color: #043873;
             color: white;
         }
+
         .status-badge {
-            font-size: 0.8rem;
-            padding: 5px 10px;
+            font-size: 0.75rem;
+            padding: 5px 12px;
             border-radius: 15px;
         }
-        .banned-true { background-color: #dc3545; color: white; }
-        .banned-false { background-color: #28a745; color: white; }
-        .role-badge {
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            color: white; /* Pastikan teks badge putih agar kontras */
+
+        .banned-true {
+            background-color: #dc3545;
+            color: white;
         }
-        .role-user { background-color: #6c757d; }
-        .role-mitra { background-color: #007bff; }
+
+        .banned-false {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .nav-link.active {
+            background-color: #0d6efd;
+            color: #fff !important;
+            border-radius: 5px;
+        }
+
+        /* Alert animation */
+        .alert-hide {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
     </style>
 </head>
+
 <body>
-    <?php include 'sidebar.php'; // Pastikan file sidebar.php ada atau hapus jika tidak digunakan ?>
+    <?php include 'sidebar.php'; ?>
 
     <div class="main-content">
-        <div class="container mt-4">
-            <h2 class="mb-4"><i class="fas fa-users-cog me-2"></i>User Management</h2>
+        <section id="user-management" class="py-5">
+            <div class="container">
+                <h2 class="text-center text-capitalize fw-bold mb-5 pb-3 border-bottom">
+                    User Management
+                </h2>
 
-            <div class="card shadow">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table user-table table-hover align-middle">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Status</th>
-                                    <th>Join Date</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if (!empty($users_to_display)): ?>
-                                    <?php foreach($users_to_display as $user_item): ?>
-                                    <tr>
-                                        <td><?= $user_item['id'] ?></td>
-                                        <td><?= htmlspecialchars($user_item['name']) ?></td>
-                                        <td><?= htmlspecialchars($user_item['email']) ?></td>
-                                        <td>
-                                            <span class="role-badge
-                                                <?= 'role-'.strtolower($user_item['role']) ?>">
-                                                <?= htmlspecialchars($user_item['role']) ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span class="status-badge
-                                                <?= $user_item['banned'] ? 'banned-true' : 'banned-false' ?>">
-                                                <?= $user_item['banned'] ? 'Banned' : 'Active' ?>
-                                            </span>
-                                        </td>
-                                        <td><?= date('d M Y', strtotime($user_item['join_date'])) ?></td>
-                                        <td>
-                                            <?php // Tombol ban/unban hanya untuk role User dan Mitra ?>
-                                            <?php if($user_item['role'] === 'User' || $user_item['role'] === 'Mitra'): ?>
-                                            <a href="?action=<?= $user_item['banned'] ? 'unban' : 'ban' ?>&id=<?= $user_item['id'] ?>"
-                                               class="btn btn-sm <?= $user_item['banned'] ? 'btn-success' : 'btn-danger' ?>"
-                                               onclick="return confirm('Are you sure?')">
-                                                <i class="fas <?= $user_item['banned'] ? 'fa-unlock' : 'fa-ban' ?>"></i>
-                                                <?= $user_item['banned'] ? 'Unban' : 'Ban' ?>
-                                            </a>
-                                            <?php else: ?>
-                                            <span class="text-muted">N/A</span>
-                                            <?php endif; ?>
-                                        </td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <tr><td colspan="7" class="text-center">No users found.</td></tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
+                <?php if (isset($_GET['msg'])): ?>
+                    <div id="alertBox" class="alert alert-<?= $_GET['msg'] == 'banned' ? 'success' : ($_GET['msg'] == 'error' ? 'danger' : 'warning') ?>">
+                        <?=
+                        $_GET['msg'] == 'banned' ? 'User berhasil dibanned!' : ($_GET['msg'] == 'unbanned' ? 'User berhasil diunban!' : ($_GET['msg'] == 'error' ? 'Gagal memproses aksi.' : ''))
+                        ?>
                     </div>
+                <?php endif; ?>
 
-                    <div class="mt-4 text-muted">
-                        <small>
-                            <i class="fas fa-info-circle me-2"></i>
-                            Hanya akun dengan role 'User' atau 'Mitra' yang dapat di-ban atau di-unban dari halaman ini.
-                        </small>
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table user-table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>No Telepon</th>
+                                        <th>Alamat</th>
+                                        <th>Status</th>
+                                        <th>Join Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($users)): ?>
+                                        <?php foreach ($users as $user):
+
+                                            $status = strtolower($user['status_user']); ?>
+                                            <tr>
+                                                <td><?= htmlspecialchars($user['id_user']) ?></td>
+                                                <td><?= htmlspecialchars($user['nama']) ?></td>
+                                                <td><?= htmlspecialchars($user['email']) ?></td>
+                                                <td><?= htmlspecialchars($user['no_telepon']) ?></td>
+                                                <td><?= htmlspecialchars($user['alamat']) ?></td>
+                                                <td>
+                                                    <span class="status-badge <?= $status === 'banned' ? 'banned-true' : 'banned-false' ?>">
+                                                        <?= ucfirst($status) ?>
+                                                    </span>
+                                                </td>
+                                                <td><?= date('d M Y', strtotime($user['bergabung_user'])) ?></td>
+                                                <td>
+                                                    <a href="?action=<?= $status === 'banned' ? 'unban' : 'ban' ?>&id=<?= $user['id_user'] ?>"
+                                                        class="btn btn-sm <?= $status === 'banned' ? 'btn-success' : 'btn-danger' ?>"
+                                                        onclick="return confirm('Are you sure?')">
+                                                        <i class="fas <?= $status === 'banned' ? 'fa-unlock' : 'fa-ban' ?>"></i>
+                                                        <?= $status === 'banned' ? 'Unban' : 'Ban' ?>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted">No users found.</td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-4 text-muted">
+                            <small>
+                                <i class="fas fa-info-circle me-2"></i>
+                                You can ban or unban users directly from this page.
+                            </small>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 
+    <script>
+        // Sembunyikan alert setelah 3 detik
+        window.addEventListener('DOMContentLoaded', () => {
+            const alertBox = document.getElementById('alertBox');
+            if (alertBox) {
+                setTimeout(() => {
+                    alertBox.classList.add('alert-hide');
+                    setTimeout(() => {
+                        alertBox.remove();
+                    }, 500);
+                }, 3000);
+            }
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
