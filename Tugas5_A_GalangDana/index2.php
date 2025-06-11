@@ -62,6 +62,7 @@ session_start();
             </button>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="profile.php">Profile</a></li>
+              <li><a class="dropdown-item" href="laporan.php">Laporan</a></li>
               <li><a class="dropdown-item" href="pages/auth/logout.php">Logout</a></li>
             </ul>
           </div>
