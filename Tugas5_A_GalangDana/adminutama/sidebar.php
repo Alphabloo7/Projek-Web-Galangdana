@@ -1,57 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
+// kosong, karena tidak ada logic PHP khusus di sini
+?>
+<style>
+    .sidebar .nav-link.active {
+        background-color: #00509e;
+        color: #fff !important;
+        font-weight: 700;
+        border-radius: 4px;
+    }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sidebar</title>
-</head>
-
-<body>
-    <!-- sidebar.php -->
-    <div class="sidebar p-3">
-        <h3 class="text-center mb-4">
-            <img src="logo-dashboard.png" alt="Logo" width="150">
-        </h3>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link text-white <?php echo basename($_SERVER['PHP_SELF']) == 'dashboard-admin.php' ? 'active' : ''; ?>" href="dashboard-admin.php">
-                    <i class="fas fa-home me-2"></i> Dashboard
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white <?php echo basename($_SERVER['PHP_SELF']) == 'donations.php' ? 'active' : ''; ?>" href="donations.php">
-                    <i class="fas fa-donate me-2"></i> Donations
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white <?php echo basename($_SERVER['PHP_SELF']) == 'documentations.php' ? 'active' : ''; ?>" href="documentations.php">
-                    <i class="fas fa-file-alt me-2"></i> Documentation
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white <?php echo basename($_SERVER['PHP_SELF']) == 'user-management.php' ? 'active' : ''; ?>" href="user-management.php">
-                    <i class="fa-solid fa-address-card"></i> User Management
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white <?php echo basename($_SERVER['PHP_SELF']) == 'comments.php' ? 'active' : ''; ?>" href="comments.php">
-                    <i class="fa-solid fa-comment"></i> Comment
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white <?php echo basename($_SERVER['PHP_SELF']) == 'report.php' ? 'active' : ''; ?>" href="report.php">
-                    <i class="fa-solid fa-flag"></i> Report
-                </a>
-            </li>
-            <li class="nav-item mt-4">
-                <a class="btn btn-danger" href="logout.php">
-                    <i class="fas fa-sign-out-alt me-2"></i> Logout
-                </a>
-            </li>
-        </ul>
+    .sidebar .nav-link:hover {
+        background-color: #004080;
+        color: white !important;
+    }
+</style>
+<!-- sidebar.php -->
+<div class="sidebar text-white position-fixed h-100" style="width: 250px; background-color: #003366;">
+    <div class="text-center my-4">
+        <img src="logo-dashboard.png" alt="Logo" width="150">
     </div>
+    <ul class="nav flex-column px-3">
+        <!-- Dashboard -->
+        <li class="nav-item">
+            <a class="nav-link text-white <?= basename($_SERVER['PHP_SELF']) == 'dashboard-admin.php' ? 'active fw-bold' : ''; ?>" href="dashboard-admin.php">
+                <i class="fas fa-home me-2"></i> Dashboard
+            </a>
+        </li>
 
-</body>
+        <!-- Donations -->
+        <li class="nav-item">
+            <a class="nav-link text-white <?= basename($_SERVER['PHP_SELF']) == 'donations.php' ? 'active fw-bold' : ''; ?>" href="donations.php">
+                <i class="fas fa-donate me-2"></i> Donations
+            </a>
+        </li>
 
-</html>
+        <!-- Documentation -->
+        <li class="nav-item">
+            <a href="documentations.php" class="nav-link text-white <?= basename($_SERVER['PHP_SELF']) == 'documentations.php' ? 'active fw-bold' : ''; ?>">
+                <i class="fas fa-file-alt me-2"></i> Documentation
+            </a>
+        </li>
+
+        <!-- Donatur List -->
+        <li class="nav-item">
+            <a href="donatur-list.php" class="nav-link text-white <?= basename($_SERVER['PHP_SELF']) == 'donatur-list.php' ? 'active fw-bold' : ''; ?>">
+                <i class="fas fa-hand-holding-heart me-2"></i> Donatur List
+            </a>
+        </li>
+
+        <!-- User Management -->
+        <li class="nav-item">
+            <a href="user-management.php" class="nav-link text-white <?= basename($_SERVER['PHP_SELF']) == 'user-management.php' ? 'active fw-bold' : ''; ?>">
+                <i class="fa-solid fa-address-card me-2"></i> User Management
+            </a>
+        </li>
+
+        <!-- Comment -->
+        <li class="nav-item">
+            <a href="comments.php" class="nav-link text-white <?= basename($_SERVER['PHP_SELF']) == 'comments.php' ? 'active fw-bold' : ''; ?>">
+                <i class="fa-solid fa-comment me-2"></i> Comment
+            </a>
+        </li>
+
+        <!-- Report -->
+        <li class="nav-item">
+            <a href="report.php" class="nav-link text-white <?= basename($_SERVER['PHP_SELF']) == 'report.php' ? 'active fw-bold' : ''; ?>">
+                <i class="fa-solid fa-flag me-2"></i> Report
+            </a>
+        </li>
+
+        <!-- Logout -->
+        <li class="nav-item mt-4">
+            <a href="../index.php" class="btn btn-danger w-100">
+                <i class="fas fa-sign-out-alt me-2"></i> Logout
+            </a>
+        </li>
+
+    </ul>
+</div>

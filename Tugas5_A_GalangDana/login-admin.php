@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Login Admin</title>
     <style>
         body {
-            background: url(pages/auth/bg4.png) no-repeat center center/cover !important;
+            background: url(images/bg6.jpg) no-repeat center center/cover !important;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -13,6 +14,7 @@
         }
 
         .login-container {
+            background: url(images/bg4.png) no-repeat center center/cover !important;
             background: white;
             padding: 25px 30px;
             border-radius: 8px;
@@ -58,21 +60,23 @@
         }
     </style>
 </head>
+
 <body>
-<div class="login-container">
-    <h2>Login Admin</h2>
-    <?php if (!empty($error)) echo "<p class='error'>$error</p>"; ?>
-    <form method="POST" action="">
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username" required>
+    <div class="login-container">
+        <h2>Login Admin</h2>
+        <?php if (!empty($error)) echo "<p class='error'>$error</p>"; ?>
+        <form method="POST" action="">
+            <label for="username">Email</label>
+            <input type="text" name="username" id="username" required>
 
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" required>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" required>
 
-        <button type="submit">Login</button>
-    </form>
-</div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
 </body>
+
 </html>
 
 <?php
@@ -86,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     $query = "SELECT * FROM admin WHERE email = ?";
-    $stmt = $koneksi->prepare($query);
+    $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $username); // pakai username karena form pakai name="username"
     $stmt->execute();
     $result = $stmt->get_result();
@@ -104,4 +108,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
-
