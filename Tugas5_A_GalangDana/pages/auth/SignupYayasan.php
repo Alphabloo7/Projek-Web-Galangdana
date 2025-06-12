@@ -233,7 +233,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <label for="no_telepon" class="form-label">Nomor Telepon</label>
           <input type="text" name="no_telepon" id="no_telepon" class="form-input-username" placeholder="Enter Your Phone Number" required>
         </div>
-        <div class="part-form">-[;]
+        <div class="part-form">
           <label for="alamat" class="form-label">Alamat</label>
           <input type="text" name="alamat" id="alamat" class="form-input-username" placeholder="Enter Your Address" required>
         </div>

@@ -2,34 +2,50 @@
 session_start();
 require '../koneksi.php';
 
+// Ambil tipe user atau mitra
+$tipe = $_GET['tipe'] ?? 'user';
+
 // Ban/unban action
 if (isset($_GET['action']) && isset($_GET['id'])) {
     $id = (int)$_GET['id'];
     $action = strtolower($_GET['action']);
 
+    if ($tipe === 'mitra') {
+        $field = 'status_mitra';
+        $table = 'mitra';
+        $id_field = 'id_mitra';
+    } else {
+        $field = 'status_user';
+        $table = 'user';
+        $id_field = 'id_user';
+    }
+
     if ($action === 'ban') {
-        $stmt = $conn->prepare("UPDATE user SET status_user = 'banned' WHERE id_user = ?");
+        $stmt = $conn->prepare("UPDATE $table SET $field = 'banned' WHERE $id_field = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
     } elseif ($action === 'unban') {
-        $stmt = $conn->prepare("UPDATE user SET status_user = 'active' WHERE id_user = ?");
+        $stmt = $conn->prepare("UPDATE $table SET $field = 'active' WHERE $id_field = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
     }
 
-    header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
+    header("Location: ?tipe=$tipe&msg=$action");
     exit;
 }
 
-// Ambil data user
-$sql = "SELECT id_user, nama, email, no_telepon, alamat, status_user, bergabung_user FROM user ORDER BY id_user ASC";
+// Ambil data
+if ($tipe === 'mitra') {
+    $sql = "SELECT id_mitra AS id, nama_mitra AS nama, email, no_telepon, alamat, status_mitra AS status, bergabung_mitra AS bergabung FROM mitra ORDER BY id_mitra ASC";
+} else {
+    $sql = "SELECT id_user AS id, nama, email, no_telepon, alamat, status_user AS status, bergabung_user AS bergabung FROM user ORDER BY id_user ASC";
+}
+
 $result = $conn->query($sql);
-
-
-$users = [];
+$items = [];
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $users[] = $row;
+        $items[] = $row;
     }
 }
 ?>
@@ -40,7 +56,7 @@ if ($result->num_rows > 0) {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>User Management</title>
+    <title>User & Mitra Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="dashboard-admin.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -66,13 +82,10 @@ if ($result->num_rows > 0) {
             color: white;
         }
 
-        .nav-link.active {
-            background-color: #0d6efd;
-            color: #fff !important;
-            border-radius: 5px;
+        .btn-toggle {
+            margin-right: 10px;
         }
 
-        /* Alert animation */
         .alert-hide {
             opacity: 0;
             transition: opacity 0.5s ease;
@@ -84,17 +97,20 @@ if ($result->num_rows > 0) {
     <?php include 'sidebar.php'; ?>
 
     <div class="main-content">
-        <section id="user-management" class="py-5">
+        <section class="py-5">
             <div class="container">
-                <h2 class="text-center text-capitalize fw-bold mb-5 pb-3 border-bottom">
-                    User Management
+                <h2 class="text-center text-capitalize fw-bold mb-4 pb-2 border-bottom">
+                    <?= ucfirst($tipe) ?> Management
                 </h2>
 
+                <div class="mb-4 text-center">
+                    <a href="?tipe=user" class="btn btn-toggle <?= $tipe === 'user' ? 'btn-primary' : 'btn-outline-primary' ?>">User</a>
+                    <a href="?tipe=mitra" class="btn btn-toggle <?= $tipe === 'mitra' ? 'btn-primary' : 'btn-outline-primary' ?>">Mitra</a>
+                </div>
+
                 <?php if (isset($_GET['msg'])): ?>
-                    <div id="alertBox" class="alert alert-<?= $_GET['msg'] == 'banned' ? 'success' : ($_GET['msg'] == 'error' ? 'danger' : 'warning') ?>">
-                        <?=
-                        $_GET['msg'] == 'banned' ? 'User berhasil dibanned!' : ($_GET['msg'] == 'unbanned' ? 'User berhasil diunban!' : ($_GET['msg'] == 'error' ? 'Gagal memproses aksi.' : ''))
-                        ?>
+                    <div id="alertBox" class="alert alert-success">
+                        <?= $_GET['msg'] === 'ban' ? ucfirst($tipe) . ' berhasil dibanned!' : ucfirst($tipe) . ' berhasil diunban!' ?>
                     </div>
                 <?php endif; ?>
 
@@ -105,34 +121,33 @@ if ($result->num_rows > 0) {
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Name</th>
+                                        <th>Nama</th>
                                         <th>Email</th>
                                         <th>No Telepon</th>
                                         <th>Alamat</th>
                                         <th>Status</th>
-                                        <th>Join Date</th>
-                                        <th>Action</th>
+                                        <th>Tanggal Bergabung</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if (!empty($users)): ?>
-                                        <?php foreach ($users as $user):
-
-                                            $status = strtolower($user['status_user']); ?>
+                                    <?php if (!empty($items)): ?>
+                                        <?php foreach ($items as $item):
+                                            $status = strtolower($item['status']); ?>
                                             <tr>
-                                                <td><?= htmlspecialchars($user['id_user']) ?></td>
-                                                <td><?= htmlspecialchars($user['nama']) ?></td>
-                                                <td><?= htmlspecialchars($user['email']) ?></td>
-                                                <td><?= htmlspecialchars($user['no_telepon']) ?></td>
-                                                <td><?= htmlspecialchars($user['alamat']) ?></td>
+                                                <td><?= htmlspecialchars($item['id']) ?></td>
+                                                <td><?= htmlspecialchars($item['nama']) ?></td>
+                                                <td><?= htmlspecialchars($item['email']) ?></td>
+                                                <td><?= htmlspecialchars($item['no_telepon']) ?></td>
+                                                <td><?= htmlspecialchars($item['alamat']) ?></td>
                                                 <td>
                                                     <span class="status-badge <?= $status === 'banned' ? 'banned-true' : 'banned-false' ?>">
                                                         <?= ucfirst($status) ?>
                                                     </span>
                                                 </td>
-                                                <td><?= date('d M Y', strtotime($user['bergabung_user'])) ?></td>
+                                                <td><?= date('d M Y', strtotime($item['bergabung'])) ?></td>
                                                 <td>
-                                                    <a href="?action=<?= $status === 'banned' ? 'unban' : 'ban' ?>&id=<?= $user['id_user'] ?>"
+                                                    <a href="?tipe=<?= $tipe ?>&action=<?= $status === 'banned' ? 'unban' : 'ban' ?>&id=<?= $item['id'] ?>"
                                                         class="btn btn-sm <?= $status === 'banned' ? 'btn-success' : 'btn-danger' ?>"
                                                         onclick="return confirm('Are you sure?')">
                                                         <i class="fas <?= $status === 'banned' ? 'fa-unlock' : 'fa-ban' ?>"></i>
@@ -143,17 +158,16 @@ if ($result->num_rows > 0) {
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="6" class="text-center text-muted">No users found.</td>
+                                            <td colspan="8" class="text-center text-muted">Data tidak ditemukan.</td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>
                             </table>
                         </div>
-
                         <div class="mt-4 text-muted">
                             <small>
                                 <i class="fas fa-info-circle me-2"></i>
-                                You can ban or unban users directly from this page.
+                                Klik tombol Ban/Unban untuk mengatur status pengguna/mitra.
                             </small>
                         </div>
                     </div>
@@ -163,15 +177,13 @@ if ($result->num_rows > 0) {
     </div>
 
     <script>
-        // Sembunyikan alert setelah 3 detik
+        // Auto-hide alert
         window.addEventListener('DOMContentLoaded', () => {
             const alertBox = document.getElementById('alertBox');
             if (alertBox) {
                 setTimeout(() => {
                     alertBox.classList.add('alert-hide');
-                    setTimeout(() => {
-                        alertBox.remove();
-                    }, 500);
+                    setTimeout(() => alertBox.remove(), 500);
                 }, 3000);
             }
         });

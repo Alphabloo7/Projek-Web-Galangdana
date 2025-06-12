@@ -71,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     body {
-      background: url(bg4.png) no-repeat center center/cover !important;
+      background-image: url('images/bg4.png');
       display: flex;
       justify-content: center;
       align-items: center;
@@ -79,6 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     .container {
+      background-image: url('images/bg6.jpg');
       width: 500px;
       height: 750px;
       background-color: rgba(209, 207, 207, 0.3);

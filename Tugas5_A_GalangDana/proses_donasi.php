@@ -60,10 +60,12 @@ if (!$stmt) {
 $stmt->bind_param("sssissis", $judul_donasi, $tgl_unggah, $isi_donasi, $target_donasi, $gambar, $bentuk_donasi, $id_kategori, $status_donasi);
 
 if ($stmt->execute()) {
-    echo json_encode(['success' => true, 'message' => 'Donasi berhasil disimpan!']);
-} else {
-    echo json_encode(['success' => false, 'message' => 'Gagal menyimpan donasi: ' . $stmt->error]);
-}
+    $_SESSION['success'] = "Donasi berhasil diunggah!";
+    header("Location: index2.php");
+    exit();
+  } else {
+    $error = "Error: " . $stmt->error;
+  }
 
 $stmt->close();
 $conn->close();
