@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once 'koneksi.php'; // koneksi ke database
 
 // Fungsi untuk upload bukti laporan
@@ -39,7 +40,7 @@ $judul   = trim($_POST['judul_laporan'] ?? '');
 $tanggal = $_POST['tgl_laporan'] ?? date('Y-m-d');
 $isi     = trim($_POST['isi_laporan'] ?? '');
 $status  = $_POST['status_laporan'] ?? 'Pending';
-$id_user = $_SESSION['id_user'];
+$id_user = $_SESSION['user_id'];
 
 // Validasi
 if ($judul === '' || $isi === '') {

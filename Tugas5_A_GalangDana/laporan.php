@@ -1,14 +1,5 @@
 <?php
-/* ------- CEK LOGIN lebih dulu ------- 
-session_start();                       // wajib panggil session dulu
-
-if (!isset($_SESSION['id_user'])) {    // belum login? lempar ke halaman login
-    header("Location: login.php");
-    exit;
-}
-
-/* (opsional) kalau mau tampilkan nama user di halaman
-$namaUser = $_SESSION['nama_user'] ?? 'User'; */
+session_start();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -18,6 +9,17 @@ $namaUser = $_SESSION['nama_user'] ?? 'User'; */
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Form Laporan</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+   <style>
+    body {
+        background-image: url('images/bg6.jpg');
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+        background-attachment: fixed;
+        min-height: 100vh;
+        padding-bottom: 50px;
+    }
+    </style>
 </head>
 
 <body class="bg-light py-5">
@@ -47,7 +49,7 @@ $namaUser = $_SESSION['nama_user'] ?? 'User'; */
             <input type="file" name="bukti_laporan" class="form-control">
           </div>
             <div class="d-flex justify-content-between">
-            <input type="hidden" name="status_laporan " value="Pending">
+            <input type="hidden" name="status_laporan" value="Pending">
             <a href="index2.php" class="btn btn-secondary">Kembali</a>
             <button type="reset" class="btn btn-warning">Reset</button>
             <button type="submit" class="btn btn-primary">Submit</button>
