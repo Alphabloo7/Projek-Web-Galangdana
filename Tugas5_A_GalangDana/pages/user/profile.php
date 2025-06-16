@@ -1,21 +1,17 @@
 <?php
 session_start();
-// Sertakan file koneksi database Anda
-// Pastikan path ini benar relatif terhadap lokasi file profile.php
+
 include '../../koneksi.php';
 
-// Periksa apakah pengguna sudah login
-// Jika belum, arahkan kembali ke halaman login
+
 if (!isset($_SESSION['id_user'])) {
-    header("Location: .../auth/Login.php"); // Sesuaikan path ke halaman login Anda
-    exit();
+    header("Location: .../auth/Login.php"); 
 }
 
 $id_user = $_SESSION['id_user'];
 $nama = $email = $password_hash = $no_telepon = $alamat = $username = "";
 $error = $success = "";
 
-// Ambil pesan sukses atau error dari session (jika ada setelah submit form)
 if (isset($_SESSION['success_message'])) {
     $success = $_SESSION['success_message'];
     unset($_SESSION['success_message']); // Hapus pesan setelah ditampilkan
@@ -25,10 +21,8 @@ if (isset($_SESSION['error_message'])) {
     unset($_SESSION['error_message']); // Hapus pesan setelah ditampilkan
 }
 
-// --- Ambil data profil pengguna dari database ---
+
 try {
-    // Siapkan query untuk mengambil data pengguna
-    // Sesuaikan nama kolom tabel 'users' Anda jika berbeda
     $stmt = $conn->prepare("SELECT nama, email, password, no_telepon, alamat, username FROM user WHERE id_user = ?");
     if (!$stmt) {
         throw new Exception("Gagal menyiapkan statement: " . $conn->error);
@@ -41,7 +35,6 @@ try {
         $row = $result->fetch_assoc();
         $nama = htmlspecialchars($row['nama']);
         $email = htmlspecialchars($row['email']);
-        // Password hash tidak akan ditampilkan di form, hanya untuk validasi backend
         $password_hash = htmlspecialchars($row['password']);
         $no_telepon = htmlspecialchars($row['no_telepon']);
         $alamat = htmlspecialchars($row['alamat']);
@@ -58,9 +51,7 @@ try {
 // --- Ambil data riwayat donasi pengguna dari database ---
 $riwayat_donasi = [];
 try {
-    // Asumsi: Anda memiliki tabel 'donasi_users' yang menghubungkan pengguna dengan donasi,
-    // dan tabel 'donasi' yang berisi detail kampanye donasi.
-    // Sesuaikan nama tabel dan kolom sesuai skema database Anda.
+
     $stmt_donasi = $conn->prepare("
         SELECT d.judul_donasi, du.jumlah_donasi, du.tanggal_donasi
         FROM transaksi du

@@ -1,11 +1,69 @@
+/* 1. Warna dasar dan posisi navbar */
 .navbar-custom {
-    background-color: #003366; 
-}
-.btn-login {
-    background-color: #FFD966; /* Warna kuning */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 99;
+    background-color: #003366;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  /* 2. Override warna (ditimpa di bawah ini) */
+  .navbar-custom {
+    background-color: #0d2c5e; /* Warna biru tua sesuai keinginan Anda */
+  }
+  
+  /* 3. Warna link di navbar */
+  .navbar-custom .nav-link {
+    color: white !important;
+  }
+  
+  /* 4. Hover effect untuk link navbar */
+  .navbar-custom .nav-link:hover {
+    color: #a7d9ff !important; /* Warna terang saat hover */
+  }
+  
+  /* 5. Tombol login di navbar */
+  .btn-login {
+    background-color: #ffd966;
     color: black;
-}
-.btn-signup {
-    background-color: #6495ED; /* Warna biru muda */
+  }
+  
+  /* 6. Tombol signup di navbar */
+  .btn-signup {
+    background-color: #6495ed;
     color: white;
-}
+  }
+  
+  /* 7. Tombol profil dropdown (jika ada user login) */
+  .profile-dropdown-btn {
+    background-color: transparent;
+    border: none;
+    color: white;
+    padding: var(--bs-navbar-toggler-padding-y) var(--bs-navbar-toggler-padding-x);
+    font-size: 1rem;
+    border-radius: var(--bs-border-radius);
+    transition: background-color 0.2s ease, color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .profile-dropdown-btn:hover,
+  .profile-dropdown-btn:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #a7d9ff;
+    outline: none;
+  }
+  
+  .profile-dropdown-btn .fas {
+    font-size: 1.5rem;
+  }
+  
+  /* Dropdown user posisinya kanan */
+  .profile-dropdown-menu {
+    right: 0;
+    left: auto;
+  }
+  

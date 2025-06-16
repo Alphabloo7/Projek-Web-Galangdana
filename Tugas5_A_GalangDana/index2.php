@@ -56,7 +56,7 @@ session_start();
                         <a class="nav-link text-white" href="#documentation">Documentation</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="form-donasi.php">Form Donate</a>
+                        <a class="nav-link text-white" href="pages/donasi/form-donasi.php">Form Donate</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="form-documentation.php">Form Documentation</a>
@@ -197,8 +197,8 @@ session_start();
           <button class='btn btn-sm btn-outline-secondary toggle-description'>Baca Selengkapnya</button>
           <div class='d-flex justify-content-between align-items-center mt-3'>
             <div class='btn-group'>
-              <a href='percobaan.php' id=$id' class='btn btn-sm btn-outline-success text-decoration-none'>Donate</a>
-            </div>
+            <a href='pages/donasi/detail-donasi.php?id=" . htmlspecialchars($id) . "' class='btn btn-sm btn-outline-success'>Donate</a>
+                    </div>
             <small class='text-body-secondary'>$timeAgo</small>
           </div>
         </div>
