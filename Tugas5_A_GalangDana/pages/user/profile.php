@@ -1,13 +1,11 @@
 <?php
 session_start();
-// Sertakan file koneksi database Anda
-// Pastikan path ini benar relatif terhadap lokasi file profile.php
-include '../../koneksi.php';
 
-// Periksa apakah pengguna sudah login
-// Jika belum, arahkan kembali ke halaman login
+include '../../koneksi.php';
+include '../../pages/auth/keamanan.php';
+
 if (!isset($_SESSION['id_user'])) {
-    header("Location: .../auth/Login.php"); // Sesuaikan path ke halaman login Anda
+    header("Location: .../auth/Login.php"); 
     exit();
 }
 
@@ -101,101 +99,76 @@ $conn->close();
     <!-- Font Awesome untuk ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* Styling umum untuk halaman */
+        
         body {
             background-color: #f8f9fa;
-            /* Latar belakang abu-abu terang */
         }
 
         .profile-container {
             max-width: 960px;
-            /* Lebar maksimum container */
             margin: 30px auto;
-            /* Posisi tengah dengan margin atas/bawah */
             background-color: #fff;
-            /* Latar belakang putih untuk card utama */
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            /* Bayangan ringan */
         }
 
         .back-button {
             margin-bottom: 20px;
-            /* Margin bawah untuk tombol kembali */
         }
 
         .profile-header {
             display: flex;
             align-items: flex-start;
             gap: 30px;
-            /* Jarak antara gambar profil dan konten kanan */
             margin-bottom: 30px;
             flex-wrap: wrap;
-            /* Mengatur wrap pada layar kecil */
         }
 
         .profile-image-section {
             text-align: center;
             flex-shrink: 0;
-            /* Mencegah section ini mengecil */
             width: 150px;
-            /* Lebar tetap untuk gambar profil */
+
         }
 
         .profile-image {
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            /* Membuat gambar lingkaran */
             object-fit: cover;
-            /* Memastikan gambar mengisi area tanpa terdistorsi */
             border: 5px solid #eee;
-            /* Border di sekitar gambar */
             margin-bottom: 15px;
         }
 
         .profile-content-right {
             flex-grow: 1;
-            /* Konten kanan mengambil sisa ruang */
         }
-
-        /* Styling untuk tab navigasi */
         .nav-tabs .nav-link {
             color: #495057;
-            /* Warna teks tab default */
         }
 
         .nav-tabs .nav-link.active {
             color: #007bff;
-            /* Warna teks tab aktif Bootstrap primary */
             border-color: #007bff #007bff #fff;
-            /* Border bawah putih agar menyatu dengan konten */
             background-color: #fff;
         }
 
         .tab-content {
             padding: 20px;
             border: 1px solid #dee2e6;
-            /* Border konten tab */
             border-top: none;
-            /* Menghilangkan border atas agar menyatu dengan tab */
             border-radius: 0 0 5px 5px;
-            /* Radius border hanya di bawah */
         }
 
-        /* Responsive adjustments */
         @media (max-width: 767.98px) {
             .profile-header {
                 flex-direction: column;
-                /* Ubah ke kolom pada layar kecil */
                 align-items: center;
-                /* Pusatkan item */
             }
 
             .profile-image-section {
                 width: 100%;
-                /* Lebar penuh di mobile */
             }
         }
     </style>

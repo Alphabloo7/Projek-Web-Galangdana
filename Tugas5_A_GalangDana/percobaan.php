@@ -1,371 +1,274 @@
+<?php
+// PHP logic from the second file to fetch data
+include 'koneksi.php';
+    require_once 'keamanan.php';  
+     include 'navbar.php';
+// Assuming 'keamanan.php' handles session checks or other security measures
+
+
+// Initialize $data to prevent errors if the ID is not found
+$data = null; 
+
+if (isset($_GET['id']) && !empty($_GET['id'])) {
+    $id = mysqli_real_escape_string($conn, $_GET['id']);
+    $query = "SELECT * FROM donasi WHERE id_donasi = '$id'";
+    $result = mysqli_query($conn, $query);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        $data = mysqli_fetch_assoc($result);
+    } else {
+        // Use a more user-friendly error display within the page layout
+        $error_message = "Donasi tidak ditemukan.";
+    }
+} else {
+    $error_message = "ID donasi tidak valid atau tidak diberikan.";
+}
+?>
+
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Set title dynamically or show a default if data not found -->
+  <title><?= $data ? htmlspecialchars($data['judul_donasi']) : 'Donasi Tidak Ditemukan' ?> - Donasi Bencana</title>
+  
+   <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Donasi Bencana</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="index-style.css">
     <style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f5f5f5;
-}
-
-.container {
-  width: 100%;
-  margin: auto;
-  background-color: white;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-}
-
-.content {
-  display: flexbox;
-}
-
-.title {
-  background-color: #003366;
-  height: 600px;
-  color: white;
-  padding: 15px;
-  font-size: 24px;
-  display: relative;
-  justify-content: space-between;
-}
-
-.uptitle {
-  margin-left: 30px;
-}
-
-.picture {
-  display: flexbox;
-  justify-items: auto;
-  width: 200px;
-  height: 100px;
-  margin-left: 30px;
-}
-
-.date {
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-  font-size: 18px;
-  margin-top: -15px;
-}
-
-.description {
-  display: flex;
-  margin-left: 630px;
-  justify-content: space-between;
-}
-
-.identity {
-  margin-left: 30px;
-  margin-top: -50px;
-}
-
-.profile-picture {
-  border-radius: 25px;
-  width: 70px;
-  height: 70px;
-}
-
-.nama-yayasan {
-  font-family: "Times New Roman", Times, serif;
-  font-size: 20px;
-  font-weight: bold;
-  margin-top: -70px;
-  margin-left: 100px;
-  margin-bottom: 15px;
-  justify-content: flex-start;
-  width: 300px;
-}
-
-.status {
-  font-family: "Times New Roman", Times, serif;
-  font-size: 14px;
-  font-weight: bold;
-  margin-top: 20px;
-  margin-left: 100px;
-}
-
-.next-identity {
-  margin-left: 30px;
-  margin-top: -50px;
-  display: flex;
-}
-
-.donation {
-  width: 300px;
-  height: 200px;
-  font-size: 32px;
-  font-weight: bold;
-  margin-top: 80px;
-  margin-left: -430px;
-  justify-content: flex-start;
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-}
-
-.information {
-  padding: 5px;
-  font-size: 18px;
-  line-height: 1.5;
-  margin-top: 180px;
-  margin-left: -160px;
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-}
-
-.donation-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 15px 0;
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-}
-
-.quantity {
-  display: flex;
-  align-items: center;
-}
-
-.quantity button {
-  padding: 5px 10px;
-  font-size: 16px;
-  border: none;
-  background-color: #003366;
-  color: white;
-  cursor: pointer;
-  margin-left: 5px;
-  margin-right: 5px;
-}
-
-.total {
-  font-size: 20px;
-  font-weight: bold;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-.payment-methods img {
-  width: 80px;
-  margin: 10px;
-  cursor: pointer;
-}
-
-.payment-methods img.selected {
-  border: 3px solid #2196F3;
-  border-radius: 12px;
-  padding: 5px;
-  box-shadow: 0 0 10px rgba(33, 150, 243, 0.4);
-}
-
-.donate-btn {
-  background-color: black;
-  color: white;
-  padding: 15px;
-  width: 100%;
-  font-size: 18px;
-  border: none;
-  cursor: pointer;
-}
-
-    </style>
+    body {
+        font-family: 'DM Sans', sans-serif;
+    }
+    .donation-container {
+      padding-top: 0px;
+      background-color: #f8f9fa;
+      min-height: 100vh;
+    }
+    .donation-header {
+      background-color: #003366;
+      color: white;
+      padding: 4rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .donation-image {
+      height: 400px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .organization-card {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-top: -100px;
+      position: relative;
+      z-index: 10;
+    }
+    .profile-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .donation-content {
+      background: white;
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-top: 2rem;
+    }
+    .payment-method {
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 3px solid transparent;
+      border-radius: 8px;
+      padding: 5px;
+      height: 50px;
+      width: auto;
+    }
+    .payment-method:hover {
+      transform: scale(1.05);
+    }
+    .payment-method.selected {
+      border-color: #2196F3;
+      box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+    }
+    .donate-btn {
+      background: #003366;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: background 0.3s;
+      width: 100%;
+    }
+    .donate-btn:hover {
+      background: #002244;
+    }
+    .status-badge {
+      background: #28a745;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .form-control-lg {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+  </style>
 </head>
 
 <body>
-  <div id="notifikasi" style="
+
+
+  <div id="notifikasi" class="alert alert-dismissible fade show position-fixed w-100" style="
     display: none;
-    padding: 15px;
+    top: 90px;
+    z-index: 1000;
+    border-radius: 0;
     text-align: center;
-    font-weight: bold;
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-    border-radius: 5px;
-    margin: 20px;
-    position: sticky;
-    top: 0;
-    z-index: 9999;
   "></div>
 
-    <div class="container">
-        <div class="content">
-            <div class="title">
-                <h1 class="uptitle">Tsunami Palu 2018</h1>
-                <div class="picture">
-                    <p class="date">28 September 2018</p>
-                    <img src="images/tsunami1.png" style="height: 400px;">
-                </div>
-                <div class="description">
-                    <div class="identity">
-                        <img src="https://placehold.co/50x50" class="profile-picture">
-                        <p class="nama-yayasan">Yayasan Sejahtera Umat</p>
-                        <p class="status">Identitas Terverifikasi</p>
-                    </div>
-                    <div class="next-identity">
-                        <p class="donation">Rp. 8.750.000</p>
-                        <p class="information">
-                            Bencana tsunami yang melanda Palu, Sulawesi Tengah pada 28 September 2018 telah meninggalkan dampak yang parah.
-                            Lebih dari 4.300 orang meninggal dunia dan ribuan lainnya kehilangan tempat tinggal dan mata pencaharian.
-                            Kami berusaha membantu mereka yang terkena dampak dengan menyediakan bantuan darurat dan mendukung upaya pemulihan.
-                    </div>
-                </div>
-            </div>
+<?php if ($data): // Only show the main content if data was found ?>
+  <div class="donation-container">
+    <div class="donation-header">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-6 mb-4 mb-md-0">
+            <h1 class="display-5 fw-bold"><?= htmlspecialchars($data['judul_donasi']) ?></h1>
+            <p class="lead"><i class="fas fa-calendar-alt me-2"></i>Diunggah pada <?= date('d F Y', strtotime($data['tgl_unggah'])) ?></p>
+            <p class="lead"><i class="fa-solid fa-bullseye me-2"></i>Status: <span class="fw-bold"><?= htmlspecialchars($data['status_donasi']) ?></span></p>
+          </div>
+          <div class="col-md-6">
+            <?php if (!empty($data['gambar'])): ?>
+              <img src="<?= htmlspecialchars($data['gambar']) ?>" alt="Gambar Donasi" class="donation-image w-100">
+            <?php else: ?>
+              <img src="images/default-donation.png" alt="Tidak ada gambar" class="donation-image w-100">
+            <?php endif; ?>
+          </div>
         </div>
-
-        <h3>Pilihan Paket Barang</h3>
-        <div class="donation-item">
-            <span>Paket A - Rp 25.000</span>
-            <span>Telur, Ayam, Ikan</span>
-            <div class="quantity">
-                <button onclick="updateQuantity('paketA', -1)">-</button>
-                <span id="paketA">1</span>
-                <button onclick="updateQuantity('paketA', 1)">+</button>
-            </div>
-        </div>
-        <div class="donation-item">
-            <span>Paket B - Rp 45.000</span>
-            <span>Daging, Sayuran, Buah</span>
-            <div class="quantity">
-                <button onclick="updateQuantity('paketB', -1)">-</button>
-                <span id="paketB">1</span>
-                <button onclick="updateQuantity('paketB', 1)">+</button>
-            </div>
-        </div>
-
-        <div class="total">Total: Rp <span id="totalAmount">70.000</span></div>
-
-        <h3>Pilih Metode Pembayaran</h3>
-        <div class="payment-methods">
-          <input type="hidden" id="selectedPaymentMethod" name="paymentMethod">
-            <img src="images/bni.png" alt="BNI">
-            <img src="images/bri.png" alt="BRI">
-            <img src="images/bca.png" alt="BCA">
-            <img src="images/mandiri.png" alt="Mandiri">
-            <img src="images/gopay.png" alt="Gopay">
-            <img src="images/dana.png" alt="Dana">
-            <img src="images/shopeepay.png" alt="ShopeePay">
-        </div>
-
-        <form id="donasiForm" onsubmit="return false;">
-          <input type="hidden" name="paket" id="inputPaket">
-          <input type="hidden" name="total" id="inputTotal">
-          <input type="hidden" name="metode" id="inputMetode">
-          <button type="submit" class="donate-btn" onclick="return prepareAndSubmit()">Donasikan Sekarang</button>
-        </form>
+      </div>
     </div>
+    
+    <div class="container">
+      <div class="organization-card">
+        <div class="d-flex align-items-center">
+          <div>
 
-    <script>
-        function updateQuantity(packageId, change) {
-            let quantityElement = document.getElementById(packageId);
-            let quantity = parseInt(quantityElement.textContent);
-            quantity = Math.max(0, quantity + change);
-            quantityElement.textContent = quantity;
-            updateTotal();
-        }
-
-        function updateTotal() {
-            let paketA = parseInt(document.getElementById('paketA').textContent) * 25000;
-            let paketB = parseInt(document.getElementById('paketB').textContent) * 45000;
-            let total = paketA + paketB;
-            document.getElementById('totalAmount').textContent = total.toLocaleString('id-ID');
-        }
-
-        function donateNow() {
-          let totalAmount = document.getElementById('totalAmount').textContent;
-          let paymentMethod = document.getElementById('selectedPaymentMethod').value;
-
-        if (!paymentMethod) {
-          alert("Silakan pilih metode pembayaran terlebih dahulu!");
-          return;
-        }
-
-          alert("Total donasi: Rp " + totalAmount + "\nMetode pembayaran: " + paymentMethod);
-        }
-
-        document.querySelectorAll('.payment-methods img').forEach(img => {
-          img.addEventListener('click', function () {
-          // Hapus 'selected' dari semua gambar
-          document.querySelectorAll('.payment-methods img').forEach(i => i.classList.remove('selected'));
-
-          // Tambahkan 'selected' ke gambar yang diklik
-          this.classList.add('selected');
-
-          // Simpan metode pembayaran ke input tersembunyi
-          document.getElementById('selectedPaymentMethod').value = this.alt;
-          });
-        });
+            <div class="fs-5 fw-bold text-danger">
+              <i class="fas fa-coins me-2"></i>Target Donasi: Rp <?= number_format($data['target_donasi'], 0, ',', '.') ?>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="donation-content mt-4">
+        <form action="proses_transaksi.php" method="POST" onsubmit="return validateDonation();">
+          <!-- Hidden inputs for form processing -->
+          <input type="hidden" name="id_donasi" value="<?= $data['id_donasi'] ?>">
+          <input type="hidden" name="metode" id="metode_pembayaran" required>
         
-        let selectedPayment = "";
-          document.querySelectorAll('.payment-methods img').forEach(img => {
-            img.addEventListener('click', function() {
-            document.querySelectorAll('.payment-methods img').forEach(el => el.classList.remove('selected'));
+          <div class="mb-4">
+            <h3 class="mb-3">Tentang Penggalangan Dana</h3>
+            <p class="lead" style="white-space: pre-wrap;"><?= htmlspecialchars($data['isi_donasi']) ?></p>
+            <p><strong>Bentuk Donasi yang Dibutuhkan:</strong> <?= htmlspecialchars($data['bentuk_donasi']) ?></p>
+          </div>
+          
+          <div class="py-4 border-top border-bottom mt-4">
+            <h3 class="mb-3 text-center">Masukkan Nominal Donasi Anda</h3>
+            <div class="input-group input-group-lg">
+                <span class="input-group-text">Rp</span>
+                <input type="number" name="total" class="form-control" placeholder="50.000" min="1000" required>
+            </div>
+          </div>
+          
+          <div class="mt-5">
+            <h3 class="mb-4">Pilih Metode Pembayaran</h3>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+              <img src="images/bni.png" alt="BNI" class="payment-method" data-method="BNI">
+              <img src="images/bri.png" alt="BRI" class="payment-method" data-method="BRI">
+              <img src="images/bca.png" alt="BCA" class="payment-method" data-method="BCA">
+              <img src="images/mandiri.png" alt="Mandiri" class="payment-method" data-method="Mandiri">
+              <img src="images/gopay.png" alt="Gopay" class="payment-method" data-method="Gopay">
+              <img src="images/dana.png" alt="Dana" class="payment-method" data-method="Dana">
+              <img src="images/shopeepay.png" alt="ShopeePay" class="payment-method" data-method="ShopeePay">
+            </div>
+          </div>
+          
+          <button type="submit" class="donate-btn mt-5 py-3 fs-5">
+            <i class="fas fa-donate me-2"></i>Donasikan Sekarang
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+<?php else: // Show an error message if data was not found ?>
+    <div class="container" style="padding-top: 150px; text-align: center;">
+        <div class="alert alert-danger">
+            <h2 class="alert-heading">Terjadi Kesalahan</h2>
+            <p><?= $error_message ?></p>
+            <hr>
+            <a href="index.php" class="btn btn-primary">Kembali ke Halaman Utama</a>
+        </div>
+    </div>
+<?php endif; ?>
+
+<script>
+    // Event listener untuk metode pembayaran
+    const paymentMethods = document.querySelectorAll('.payment-method');
+    const paymentInput = document.getElementById('metode_pembayaran');
+
+    paymentMethods.forEach(img => {
+        img.addEventListener('click', function() {
+            // Reset semua style
+            paymentMethods.forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Aktifkan yang dipilih
             this.classList.add('selected');
-            selectedPayment = this.alt; // ambil dari alt-nya
-            });
-          });
+            paymentInput.value = this.dataset.method; // Set value untuk hidden input
+        });
+    });
 
-          function prepareAndSubmit() {
-            let qtyA = parseInt(document.getElementById('paketA').textContent);
-            let qtyB = parseInt(document.getElementById('paketB').textContent);
-            let paketList = [];
+    // Fungsi validasi form sebelum submit
+    function validateDonation() {
+        if (!paymentInput.value) {
+            tampilkanNotifikasi("Silakan pilih metode pembayaran terlebih dahulu.", true);
+            return false; // Mencegah form untuk submit
+        }
+        // Validasi lain (seperti jumlah) sudah ditangani oleh atribut `required` dan `min` pada input
+        return true; // Lanjutkan submit form
+    }
 
-            if (qtyA > 0) paketList.push(`${qtyA}x Paket A`);
-            if (qtyB > 0) paketList.push(`${qtyB}x Paket B`);
-
-            let total = parseInt(document.getElementById('totalAmount').textContent.replace(/\./g, '').replace(',', ''));
-
-            if (paketList.length === 0) {
-              tampilkanNotifikasi("Pilih setidaknya satu paket donasi.", true);
-              return false;
-            }
-
-            if (!selectedPayment) {
-              tampilkanNotifikasi("Pilih metode pembayaran.", true);
-              return false;
-            }
-
-            const paket = paketList.join(', ');
-            const formData = new FormData();
-            formData.append('paket', paket);
-            formData.append('total', total);
-            formData.append('metode', selectedPayment);
-
-            fetch('proses_transaksi.php', {
-              method: 'POST',
-              body: formData
-            })
-              .then(response => response.text())
-              .then(result => {
-              tampilkanNotifikasi(result, result.includes("berhasil") ? false : true);
-            })
-              .catch(error => {
-              tampilkanNotifikasi("Terjadi kesalahan saat mengirim data.", true);
-              console.error("Error:", error);
-            });
-
-            return false;
-          }
-
-          function tampilkanNotifikasi(pesan, isError) {
-            const notif = document.getElementById('notifikasi');
-            notif.style.display = 'block';
-            notif.textContent = pesan;
-            notif.style.backgroundColor = isError ? '#f8d7da' : '#d4edda';
-            notif.style.color = isError ? '#721c24' : '#155724';
-            notif.style.border = isError ? '1px solid #f5c6cb' : '1px solid #c3e6cb';
-
-            setTimeout(() => {
-              notif.style.display = 'none';
-            }, 5000);
-          }
-
-
-    </script>
+    // Fungsi notifikasi (diambil dari template)
+    function tampilkanNotifikasi(pesan, isError) {
+        const notif = document.getElementById('notifikasi');
+        notif.style.display = 'block';
+        notif.textContent = pesan;
+        notif.className = 'alert alert-dismissible fade show position-fixed w-100'; // reset classes
+        if (isError) {
+            notif.classList.add('alert-danger');
+        } else {
+            notif.classList.add('alert-success');
+        }
+        
+        // Auto-hide a notification
+        setTimeout(() => {
+            notif.style.display = 'none';
+        }, 5000);
+    }
+</script>
 </body>
-
 </html>

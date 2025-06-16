@@ -22,30 +22,89 @@ h2 {
   font-family: "DM Sans", sans-serif !important;
 }
 
-/* Navbar */
+/* Navbar Styling */
 .navbar-custom {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 99;
-  background-color: #003366;
+  z-index: 1030; /* Z-index standar Bootstrap untuk navbar fixed */
+  background-color: #003366 !important; /* Warna latar biru gelap, !important untuk override jika perlu */
   transition: background-color 0.3s ease-in-out;
-  padding: top;
+  padding-top: 0.75rem;    /* Padding atas dan bawah navbar */
+  padding-bottom: 0.75rem;
 }
 
-.main-content {
-  margin-top: 5px;
+/* Memastikan elemen internal navbar tidak memiliki background sendiri (mengatasi "box putih") */
+.navbar-custom .container,
+.navbar-custom .navbar-collapse,
+.navbar-custom .navbar-nav {
+  background-color: transparent !important;
 }
 
-.btn-login {
-  background-color: #ffd966;
-  color: black;
+/* Link Navigasi di Navbar */
+.navbar-custom .navbar-nav .nav-link {
+  color: #ffffff !important; /* Warna teks link putih */
+  font-weight: 500;
+  padding-left: 1rem;      /* Spasi kiri-kanan antar link */
+  padding-right: 1rem;
+  transition: color 0.3s ease;
 }
 
-.btn-signup {
-  background-color: #6495ed;
+.navbar-custom .navbar-nav .nav-link:hover,
+.navbar-custom .navbar-nav .nav-link:focus {
+  color: #cccccc !important; /* Warna link saat hover/focus (sedikit lebih terang) */
+}
+
+/* Tombol Toggle (Hamburger Menu) Navbar */
+.navbar-custom .navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.2) !important; /* Warna border tombol toggle */
+}
+
+.navbar-custom .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important; /* Ikon hamburger putih */
+}
+
+/* Tombol Login & Sign Up di Navbar */
+.navbar-custom .btn-login,
+.navbar-custom .btn-signup {
+  font-weight: bold;
+  padding: 0.375rem 0.75rem; /* Ukuran padding tombol */
+  border-radius: 0.25rem;     /* Radius sudut tombol */
+  line-height: 1.5;          /* Ketinggian baris untuk teks di tombol */
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.navbar-custom .btn-login {
+  background-color: #ffd966;  /* Warna background kuning untuk login */
+  color: #333333;           /* Warna teks gelap agar kontras */
+  border: 1px solid #ffd966;  /* Border tombol login */
+}
+.navbar-custom .btn-login:hover {
+  background-color: #e6c354;  /* Warna hover tombol login */
+  border-color: #e6c354;
+  color: #333333;
+}
+
+.navbar-custom .btn-signup {
+  background-color: #6495ed;  /* Warna background biru untuk sign up */
+  color: white;              /* Warna teks putih */
+  border: 1px solid #6495ed;  /* Border tombol sign up */
+}
+.navbar-custom .btn-signup:hover {
+  background-color: #5380d2;  /* Warna hover tombol sign up */
+  border-color: #5380d2;
   color: white;
+}
+
+/* Konten Utama - Memberi Jarak dari Navbar Fixed */
+.main-content {
+  /* PENTING: Sesuaikan nilai padding-top ini dengan tinggi aktual navbar Anda
+     ditambah sedikit spasi ekstra (misal, navbar 70px -> padding-top: 90px).
+     Ukur tinggi navbar di browser menggunakan Inspect Element. */
+  padding-top: 90px; /* CONTOH! GANTI NILAI INI! */
+  /* Jika Anda punya footer fixed-bottom, Anda mungkin juga perlu padding-bottom di sini */
+  /* padding-bottom: 80px; */
 }
 
 /* Hero Section */

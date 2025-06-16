@@ -1,8 +1,8 @@
 <?php
 $host = "localhost";       // Ganti jika bukan localhost
 $user = "root";            // Username database kamu
-$password = "";            // Password database kamu (kosongkan kalau pakai XAMPP default)
-$database = "mydonate7"; // Ganti dengan nama database kamu
+$password = "1234";            // Password database kamu (kosongkan kalau pakai XAMPP default)
+$database = "mydonate3"; // Ganti dengan nama database kamu
 
 $conn = new mysqli($host, $user, $password, $database);
 

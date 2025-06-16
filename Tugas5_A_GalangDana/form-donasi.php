@@ -1,3 +1,9 @@
+<?php
+session_start();
+include 'koneksi.php';
+include 'pages/auth/keamanan.php';
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -73,7 +79,7 @@
                     <!-- Form Uang -->
                     <div id="form-uang" class="mb-3 d-none">
                         <label for="jumlah_uang" class="form-label">Jumlah Uang yang Dikumpulkan (Rp)</label>
-                        <input type="number" class="form-control" name="jumlah_uang" id="jumlah_uang"
+                        <input type="number" class="form-control" name="target_donasi" id="jumlah_uang"
                             placeholder="Contoh: 10000000">
                     </div>
 

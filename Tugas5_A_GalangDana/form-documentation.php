@@ -1,3 +1,9 @@
+<?php
+session_start();
+include 'koneksi.php';
+include 'pages/auth/keamanan.php';
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
