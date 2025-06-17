@@ -1,5 +1,5 @@
 <?php
-session_start();
+include 'pages/auth/keamanan.php';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -18,6 +18,11 @@ session_start();
         background-attachment: fixed;
         min-height: 100vh;
         padding-bottom: 50px;
+    }
+    .card-body {
+        background: #ceebfd !important;
+        border-radius: 5px;
+        border: none;
     }
     </style>
 </head>
@@ -48,6 +53,7 @@ session_start();
             <label class="form-label fw-bold">Bukti Laporan</label>
             <input type="file" name="bukti_laporan" class="form-control">
           </div>
+
             <div class="d-flex justify-content-between">
             <input type="hidden" name="status_laporan" value="Pending">
             <a href="index2.php" class="btn btn-secondary">Kembali</a>

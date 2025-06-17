@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         // Cek apakah email sudah terdaftar
         $check_email = "SELECT * FROM user WHERE email = ?";
-        $stmt_check = $koneksi->prepare($check_email);
+        $stmt_check = $conn->prepare($check_email);
         $stmt_check->bind_param("s", $email);
         $stmt_check->execute();
         $result = $stmt_check->get_result();
@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Insert user baru
             $sql = "INSERT INTO user (nama, email, password, no_telepon, alamat, username, bergabung_user, status_user)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $koneksi->prepare($sql);
+            $stmt = $conn->prepare($sql);
             $stmt->bind_param("ssssssss", $nama, $email, $hashed_password, $no_telepon, $alamat, $username, $bergabung, $status);
 
             if ($stmt->execute()) {

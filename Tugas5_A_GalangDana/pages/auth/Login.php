@@ -14,8 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user = $result->fetch_assoc();
 
     if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['id_user'] = $user['id_user'];
         $_SESSION['nama'] = $user['nama'];
+        $_SESSION['status_login'] = true;
         header("Location: ../../index2.php"); // Ganti ke halaman landing sesuai punyamu
         exit();
     } else {

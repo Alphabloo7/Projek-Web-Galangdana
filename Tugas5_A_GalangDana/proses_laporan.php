@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'koneksi.php'; // koneksi ke database
+include 'pages/auth/keamanan.php';
 
 // Fungsi untuk upload bukti laporan
 function uploadBukti($file)
@@ -40,7 +41,7 @@ $judul   = trim($_POST['judul_laporan'] ?? '');
 $tanggal = $_POST['tgl_laporan'] ?? date('Y-m-d');
 $isi     = trim($_POST['isi_laporan'] ?? '');
 $status  = $_POST['status_laporan'] ?? 'Pending';
-$id_user = $_SESSION['user_id'];
+$id_user = $_SESSION['id_user'];
 
 // Validasi
 if ($judul === '' || $isi === '') {
@@ -60,7 +61,6 @@ if (!$stmt) {
 }
 
 $stmt->bind_param("sssssi", $judul, $isi, $bukti, $tanggal, $status, $id_user);
-
 if ($stmt->execute()) {
     echo "<script>alert('Laporan berhasil disimpan!'); window.location.href='index2.php';</script>";
 } else {
