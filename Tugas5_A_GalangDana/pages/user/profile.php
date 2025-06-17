@@ -89,7 +89,7 @@ try {
 $riwayat_laporan = [];
 try {
     $stmt_laporan = $conn->prepare("
-        SELECT judul_laporan, isi_laporan, tgl_laporan, status_laporan
+        SELECT judul_laporan, isi_laporan, tgl_laporan, status_laporan, bukti_laporan
         FROM laporan
         WHERE id_user = ?
         ORDER BY tgl_laporan DESC
@@ -348,6 +348,7 @@ $conn->close();
                                         <th>Judul</th>
                                         <th>Isi</th>
                                         <th>Tanggal</th>
+                                        <th>Bukti</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -358,6 +359,13 @@ $conn->close();
                                             <td><?= htmlspecialchars($laporan['judul_laporan']); ?></td>
                                             <td><?= htmlspecialchars($laporan['isi_laporan']); ?></td>
                                             <td><?= date('d M Y', strtotime($laporan['tgl_laporan'])); ?></td>
+                                            <td>
+                                            <?php if (!empty($laporan['bukti_laporan'])): ?>
+                                                <a href="..\..\uploads_bukti/<?= htmlspecialchars($laporan['bukti_laporan']) ?>" target="_blank">Lihat Bukti</a>
+                                            <?php else: ?>
+                                                <span class="text-muted">-</span>
+                                            <?php endif; ?>
+                                            </td>
                                             <td>
                                                 <span class="badge bg-<?= 
                                                     $laporan['status_laporan'] == 'Resolved' ? 'success': 'secondary'
