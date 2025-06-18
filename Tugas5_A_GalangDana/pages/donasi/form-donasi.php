@@ -1,3 +1,9 @@
+<?php
+session_start();
+include '../../koneksi.php';
+include '../auth/keamanan.php';
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -8,21 +14,21 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-    body {
-        background-image: url('images/bg6.jpg');
-        background-repeat: no-repeat;
-        background-position: center center;
-        background-size: cover;
-        background-attachment: fixed;
-        min-height: 100vh;
-        padding-bottom: 50px;
-    }
+        body {
+            background-image: url('images/bg6.jpg');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
 
-    .card-body {
-        background: url(images/bg4.png) no-repeat center center/cover !important;
-        border-radius: 5px;
-        border: none;
-    }
+        .card-body {
+            background: url(images/bg4.png) no-repeat center center/cover !important;
+            border-radius: 5px;
+            border: none;
+        }
     </style>
 </head>
 
@@ -33,11 +39,11 @@
                 <h3 class="text-center text-primary">Form Donasi</h3>
                 <p class="text-center text-muted mb-4">Silakan isi data donasi dengan lengkap!</p>
 
-        <form id="form-donasi" action="proses_donasi.php" method="POST" enctype="multipart/form-data">
-          <div class="mb-3">
-            <label class="form-label">Judul Donasi</label>
-            <input type="text" name="judul_donasi" class="form-control" required>
-          </div>
+                <form id="form-donasi" action="proses_donasi.php" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Judul Donasi</label>
+                        <input type="text" name="judul_donasi" class="form-control" required>
+                    </div>
 
                     <div class="mb-3">
                         <label class="form-label">Tanggal Peluncuran Donasi</label>
@@ -73,7 +79,7 @@
                     <!-- Form Uang -->
                     <div id="form-uang" class="mb-3 d-none">
                         <label for="jumlah_uang" class="form-label">Jumlah Uang yang Dikumpulkan (Rp)</label>
-                        <input type="number" class="form-control" name="jumlah_uang" id="jumlah_uang"
+                        <input type="number" class="form-control" name="target_donasi" id="jumlah_uang"
                             placeholder="Contoh: 10000000">
                     </div>
 
@@ -113,8 +119,8 @@
                     </div>
 
                     <div class="d-flex justify-content-between">
-                        <input type="hidden" name="status" value="Non Active">
-                        <a href="index2.php" class="btn btn-secondary">Kembali</a>
+                        <input type="hidden" name="status_donasi" value="Non Active">
+                        <a href="../../index2.php" class="btn btn-secondary">Kembali</a>
                         <button type="reset" class="btn btn-warning">Reset</button>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
@@ -124,67 +130,67 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- AJAX Script -->
-  <script>
-    const form = document.getElementById('form-donasi');
+    <!-- AJAX Script -->
+    <script>
+        const form = document.getElementById('form-donasi');
 
-    form.addEventListener('submit', function(e) {
-      e.preventDefault(); // cegah submit biasa
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // cegah submit biasa
 
-      const formData = new FormData(form);
+            const formData = new FormData(form);
 
-      fetch('proses_donasi.php', {
-          method: 'POST',
-          body: formData
-        })
-        .then(response => response.json()) // anggap server balas JSON
-        .then(data => {
-          if (data.success) {
-            // redirect ke landing page jika berhasil
-            window.location.href = 'index2.php';
-          } else {
-            alert('Gagal submit donasi: ' + (data.message || 'Unknown error'));
-          }
-        })
-        .catch(error => {
-          alert('Error saat submit: ' + error);
+            fetch('proses_donasi.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json()) // anggap server balas JSON
+                .then(data => {
+                    if (data.success) {
+                        // redirect ke landing page jika berhasil
+                        window.location.href = '../../index2.php';
+                    } else {
+                        alert('Gagal submit donasi: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    alert('Error saat submit: ' + error);
+                });
         });
-    });
-  </script>
+    </script>
 </body>
 <script>
-const radioUang = document.getElementById('donasi_uang');
-const radioBarang = document.getElementById('donasi_barang');
-const formUang = document.getElementById('form-uang');
-const formBarang = document.getElementById('form-barang');
-const paketSelect = document.getElementById('paket_select');
-const barangFields = document.getElementById('barang-fields');
-const daftarBarang = document.getElementById('daftar_barang');
-const daftarHarga = document.getElementById('daftar_harga');
+    const radioUang = document.getElementById('donasi_uang');
+    const radioBarang = document.getElementById('donasi_barang');
+    const formUang = document.getElementById('form-uang');
+    const formBarang = document.getElementById('form-barang');
+    const paketSelect = document.getElementById('paket_select');
+    const barangFields = document.getElementById('barang-fields');
+    const daftarBarang = document.getElementById('daftar_barang');
+    const daftarHarga = document.getElementById('daftar_harga');
 
-function updateFormVisibility() {
-    formUang.classList.add('d-none');
-    formBarang.classList.add('d-none');
-    if (radioUang.checked) {
-        formUang.classList.remove('d-none');
-    } else if (radioBarang.checked) {
-        formBarang.classList.remove('d-none');
+    function updateFormVisibility() {
+        formUang.classList.add('d-none');
+        formBarang.classList.add('d-none');
+        if (radioUang.checked) {
+            formUang.classList.remove('d-none');
+        } else if (radioBarang.checked) {
+            formBarang.classList.remove('d-none');
+        }
     }
-}
 
-radioUang.addEventListener('change', updateFormVisibility);
-radioBarang.addEventListener('change', updateFormVisibility);
+    radioUang.addEventListener('change', updateFormVisibility);
+    radioBarang.addEventListener('change', updateFormVisibility);
 
-paketSelect.addEventListener('change', function() {
-    const jumlah = this.value === 'istimewa' ? 3 : this.value === 'biasa' ? 2 : 0;
-    barangFields.innerHTML = '';
-    daftarBarang.value = '';
-    daftarHarga.value = '';
+    paketSelect.addEventListener('change', function() {
+        const jumlah = this.value === 'istimewa' ? 3 : this.value === 'biasa' ? 2 : 0;
+        barangFields.innerHTML = '';
+        daftarBarang.value = '';
+        daftarHarga.value = '';
 
-    for (let i = 1; i <= jumlah; i++) {
-        const row = document.createElement('div');
-        row.classList.add('mb-2', 'row');
-        row.innerHTML = `
+        for (let i = 1; i <= jumlah; i++) {
+            const row = document.createElement('div');
+            row.classList.add('mb-2', 'row');
+            row.innerHTML = `
         <div class="col-md-6">
           <input type="text" class="form-control barang-nama" placeholder="Nama Barang ${i}">
         </div>
@@ -192,26 +198,26 @@ paketSelect.addEventListener('change', function() {
           <input type="number" class="form-control barang-harga" placeholder="Harga Barang ${i}">
         </div>
       `;
-        barangFields.appendChild(row);
-    }
+            barangFields.appendChild(row);
+        }
 
-    barangFields.querySelectorAll('.barang-nama, .barang-harga').forEach(input => {
-        input.addEventListener('input', updateRingkasan);
+        barangFields.querySelectorAll('.barang-nama, .barang-harga').forEach(input => {
+            input.addEventListener('input', updateRingkasan);
+        });
     });
-});
 
-function updateRingkasan() {
-    const namaList = Array.from(document.querySelectorAll('.barang-nama'))
-        .map(input => input.value.trim())
-        .filter(Boolean);
+    function updateRingkasan() {
+        const namaList = Array.from(document.querySelectorAll('.barang-nama'))
+            .map(input => input.value.trim())
+            .filter(Boolean);
 
-    const hargaList = Array.from(document.querySelectorAll('.barang-harga'))
-        .map(input => input.value.trim())
-        .filter(Boolean);
+        const hargaList = Array.from(document.querySelectorAll('.barang-harga'))
+            .map(input => input.value.trim())
+            .filter(Boolean);
 
-    daftarBarang.value = namaList.join(', ');
-    daftarHarga.value = hargaList.join(', ');
-}
+        daftarBarang.value = namaList.join(', ');
+        daftarHarga.value = hargaList.join(', ');
+    }
 </script>
 
 </html>

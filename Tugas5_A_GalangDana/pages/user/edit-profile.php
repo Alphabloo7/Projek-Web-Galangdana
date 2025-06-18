@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../../koneksi.php'; 
+include 'pages/auth/keamanan.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: profile.php"); 

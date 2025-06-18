@@ -1,225 +1,289 @@
 <?php
-include '../../koneksi.php';
+// PHP logic from the second file to fetch data
+include 'koneksi.php';
+require_once 'keamanan.php';
+include 'navbar.php';
+// Assuming 'keamanan.php' handles session checks or other security measures
 
-// Ambil ID dari URL
-if (!isset($_GET['id'])) {
-  echo "Donasi tidak ditemukan (ID tidak diberikan).";
-  exit;
-}
 
-$id_donasi = intval($_GET['id']); // Gunakan id_donasi sebagai variabel utama
+// Initialize $data to prevent errors if the ID is not found
+$data = null;
 
-// Query donasi lengkap 
-$query = $conn->query("SELECT d.*, k.jenis_kategori, m.nama_mitra  
-    FROM donasi d 
-    LEFT JOIN kategori_donasi k ON d.id_kategori = k.id_kategori
-    LEFT JOIN mitra m ON d.id_mitra = m.id_mitra
-    WHERE d.id_donasi = $id_donasi"); 
+if (isset($_GET['id']) && !empty($_GET['id'])) {
+  $id = mysqli_real_escape_string($conn, $_GET['id']);
+  $query = "SELECT * FROM donasi WHERE id_donasi = '$id'";
+  $result = mysqli_query($conn, $query);
 
-if (!$query || $query->num_rows == 0) {
-  echo "Donasi tidak ditemukan (data kosong).";
-  exit;
-}
-
-// Ambil data
-$data = $query->fetch_assoc();
-$judul     = $data['judul_donasi'];
-$tanggal   = date('d F Y', strtotime($data['tgl_unggah']));
-$gambar    = $data['gambar'];
-$isi       = $data['isi_donasi'];
-$status    = $data['status_donasi'];
-$bentuk    = $data['bentuk_donasi'];
-$lembaga   = $data['nama_mitra'] ?? 'Tidak Diketahui';
-
-// Ambil paket jika bentuk donasi adalah Barang
-$pakets = [];
-if ($bentuk === 'Barang') {
-  $paketResult = $conn->query("SELECT * FROM donasi_barang WHERE id_donasi = $id_donasi");
-  while ($p = $paketResult->fetch_assoc()) {
-    $pakets[] = $p;
+  if ($result && mysqli_num_rows($result) > 0) {
+    $data = mysqli_fetch_assoc($result);
+  } else {
+    // Use a more user-friendly error display within the page layout
+    $error_message = "Donasi tidak ditemukan.";
   }
+} else {
+  $error_message = "ID donasi tidak valid atau tidak diberikan.";
 }
 ?>
 
-
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Donasi Bencana</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Set title dynamically or show a default if data not found -->
+  <title><?= $data ? htmlspecialchars($data['judul_donasi']) : 'Donasi Tidak Ditemukan' ?> - Donasi Bencana</title>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="index-style.css">
   <style>
-    <?php include '../../index-style.css'; ?>
+    body {
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .donation-container {
+      padding-top: 0px;
+      background-color: #f8f9fa;
+      min-height: 100vh;
+    }
+
+    .donation-header {
+      background-color: #003366;
+      color: white;
+      padding: 4rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .donation-image {
+      height: 400px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .organization-card {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-top: -100px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .profile-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .donation-content {
+      background: white;
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-top: 2rem;
+    }
+
+    .payment-method {
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 3px solid transparent;
+      border-radius: 8px;
+      padding: 5px;
+      height: 50px;
+      width: auto;
+    }
+
+    .payment-method:hover {
+      transform: scale(1.05);
+    }
+
+    .payment-method.selected {
+      border-color: #2196F3;
+      box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+    }
+
+    .donate-btn {
+      background: #003366;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: background 0.3s;
+      width: 100%;
+    }
+
+    .donate-btn:hover {
+      background: #002244;
+    }
+
+    .status-badge {
+      background: #28a745;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .form-control-lg {
+      font-size: 1.5rem;
+      text-align: center;
+    }
   </style>
 </head>
 
 <body>
-  <div id="notifikasi" class="alert alert-dismissible fade show position-fixed w-100" style="display: none; top: 90px; z-index: 1000; border-radius: 0; text-align: center;"></div>
 
-  <div class="donation-container">
-    <div class="donation-header">
+
+  <div id="notifikasi" class="alert alert-dismissible fade show position-fixed w-100" style="
+    display: none;
+    top: 90px;
+    z-index: 1000;
+    border-radius: 0;
+    text-align: center;
+  "></div>
+
+  <?php if ($data): // Only show the main content if data was found 
+  ?>
+    <div class="donation-container">
+      <div class="donation-header">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-md-6 mb-4 mb-md-0">
+              <h1 class="display-5 fw-bold"><?= htmlspecialchars($data['judul_donasi']) ?></h1>
+              <p class="lead"><i class="fas fa-calendar-alt me-2"></i>Diunggah pada <?= date('d F Y', strtotime($data['tgl_unggah'])) ?></p>
+              <p class="lead"><i class="fa-solid fa-bullseye me-2"></i>Status: <span class="fw-bold"><?= htmlspecialchars($data['status_donasi']) ?></span></p>
+            </div>
+            <div class="col-md-6">
+              <?php if (!empty($data['gambar'])): ?>
+                <img src="<?= htmlspecialchars($data['gambar']) ?>" alt="Gambar Donasi" class="donation-image w-100">
+              <?php else: ?>
+                <img src="images/default-donation.png" alt="Tidak ada gambar" class="donation-image w-100">
+              <?php endif; ?>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="container">
-        <div class="row">
-          <div class="col-md-6 mb-4 mb-md-0">
-            <h1 class="display-5 fw-bold"><?= htmlspecialchars($judul) ?></h1>
-            <p class="lead"><i class="fas fa-calendar-alt me-2"></i><?= $tanggal ?></p>
-          </div>
-          <div class="col-md-6">
-            <img src="<?= $gambar ?>" alt="<?= htmlspecialchars($judul) ?>" class="donation-image w-100">
-          </div>
-        </div>
-      </div>
-    </div>
+        <div class="organization-card">
+          <div class="d-flex align-items-center">
+            <div>
 
-    <div class="container">
-      <div class="organization-card">
-        <div class="d-flex align-items-center">
-          <img src="images/gilang.png" class="profile-img me-4">
-          <div>
-            <h3 class="mb-1"><?= $lembaga ?></h3>
-            <span class="status-badge"><?= $status ?></span>
-            <div class="mt-3 fs-5 fw-bold text-primary">
-              <i class="fas fa-donate me-2"></i>
-              <?php
-              $getTerkumpul = $conn->query("SELECT SUM(terkumpul_paket * harga_paket) as total FROM donasi_barang WHERE id_donasi = $id_donasi");
-              $jumlah = $getTerkumpul->fetch_assoc()['total'] ?? 0;
-              echo 'Rp ' . number_format($jumlah, 0, ',', '.');
-              ?>
-              terkumpul
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="donation-content mt-4">
-        <div class="mb-4">
-          <h3 class="mb-3">Tentang Bencana</h3>
-          <p class="lead"><?= nl2br(htmlspecialchars($isi)) ?></p>
-        </div>
-
-        <h3 class="mb-4">Pilihan Paket Barang</h3>
-        <?php foreach ($pakets as $i => $paket): ?>
-          <div class="donation-item">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h5 class="mb-1"><?= htmlspecialchars($paket['jenis_paket']) ?> - Rp <?= number_format($paket['harga_paket'], 0, ',', '.') ?></h5>
-                <p class="mb-0 text-muted">Target: <?= $paket['target_paket'] ?> paket</p>
-              </div>
-              <div class="quantity-control">
-                <button class="quantity-btn" onclick="updateQuantity('paket<?= $i ?>', -1)">-</button>
-                <span class="quantity-display" id="paket<?= $i ?>" data-harga="<?= $paket['harga_paket'] ?>">0</span>
-                <button class="quantity-btn" onclick="updateQuantity('paket<?= $i ?>', 1)">+</button>
+              <div class="fs-5 fw-bold text-danger">
+                <i class="fas fa-coins me-2"></i>Target Donasi: Rp <?= number_format($data['target_donasi'], 0, ',', '.') ?>
               </div>
             </div>
           </div>
-        <?php endforeach; ?>
-
-        <div class="py-3 border-top border-bottom mt-4">
-          <div class="d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Total Donasi:</h4>
-            <h3 class="mb-0 text-primary">Rp <span id="totalAmount">0</span></h3>
-          </div>
         </div>
 
-        <div class="mt-5">
-          <h3 class="mb-4">Pilih Metode Pembayaran</h3>
-          <div class="d-flex flex-wrap gap-3">
-            <img src="../../images/bni.png" alt="BNI" class="payment-method" data-method="BNI">
-            <img src="../../images/bri.png" alt="BRI" class="payment-method" data-method="BRI">
-            <img src="../../images/bca.png" alt="BCA" class="payment-method" data-method="BCA">
-            <img src="../../images/mandiri.png" alt="Mandiri" class="payment-method" data-method="Mandiri">
-            <img src="../../images/gopay.png" alt="Gopay" class="payment-method" data-method="Gopay">
-            <img src="../../images/dana.png" alt="Dana" class="payment-method" data-method="Dana">
-            <img src="../../images/shopeepay.png" alt="ShopeePay" class="payment-method" data-method="ShopeePay">
-          </div>
-        </div>
+        <div class="donation-content mt-4">
+          <form action="proses_transaksi.php" method="POST" onsubmit="return validateDonation();">
+            <!-- Hidden inputs for form processing -->
+            <input type="hidden" name="id_donasi" value="<?= $data['id_donasi'] ?>">
+            <input type="hidden" name="metode" id="metode_pembayaran" required>
 
-        <button class="donate-btn mt-5 py-3" onclick="prepareAndSubmit()">
-          <i class="fas fa-donate me-2"></i>Donasikan Sekarang
-        </button>
+            <div class="mb-4">
+              <h3 class="mb-3">Tentang Penggalangan Dana</h3>
+              <p class="lead" style="white-space: pre-wrap;"><?= htmlspecialchars($data['isi_donasi']) ?></p>
+              <p><strong>Bentuk Donasi yang Dibutuhkan:</strong> <?= htmlspecialchars($data['bentuk_donasi']) ?></p>
+            </div>
+
+            <div class="py-4 border-top border-bottom mt-4">
+              <h3 class="mb-3 text-center">Masukkan Nominal Donasi Anda</h3>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text">Rp</span>
+                <input type="number" name="total" class="form-control" placeholder="50.000" min="1000" required>
+              </div>
+            </div>
+
+            <div class="mt-5">
+              <h3 class="mb-4">Pilih Metode Pembayaran</h3>
+              <div class="d-flex flex-wrap justify-content-center gap-3">
+                <img src="images/bni.png" alt="BNI" class="payment-method" data-method="BNI">
+                <img src="images/bri.png" alt="BRI" class="payment-method" data-method="BRI">
+                <img src="images/bca.png" alt="BCA" class="payment-method" data-method="BCA">
+                <img src="images/mandiri.png" alt="Mandiri" class="payment-method" data-method="Mandiri">
+                <img src="images/gopay.png" alt="Gopay" class="payment-method" data-method="Gopay">
+                <img src="images/dana.png" alt="Dana" class="payment-method" data-method="Dana">
+                <img src="images/shopeepay.png" alt="ShopeePay" class="payment-method" data-method="ShopeePay">
+              </div>
+            </div>
+
+            <button type="submit" class="donate-btn mt-5 py-3 fs-5">
+              <i class="fas fa-donate me-2"></i>Donasikan Sekarang
+            </button>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  <?php else: // Show an error message if data was not found 
+  ?>
+    <div class="container" style="padding-top: 150px; text-align: center;">
+      <div class="alert alert-danger">
+        <h2 class="alert-heading">Terjadi Kesalahan</h2>
+        <p><?= $error_message ?></p>
+        <hr>
+        <a href="index.php" class="btn btn-primary">Kembali ke Halaman Utama</a>
+      </div>
+    </div>
+  <?php endif; ?>
 
   <script>
-    function updateQuantity(id, change) {
-      const el = document.getElementById(id);
-      const harga = parseInt(el.dataset.harga);
-      let qty = Math.max(0, parseInt(el.textContent) + change);
-      el.textContent = qty;
-      updateTotal();
-    }
+    // Event listener untuk metode pembayaran
+    const paymentMethods = document.querySelectorAll('.payment-method');
+    const paymentInput = document.getElementById('metode_pembayaran');
 
-    function updateTotal() {
-      let total = 0;
-      document.querySelectorAll('.quantity-display').forEach(el => {
-        const harga = parseInt(el.dataset.harga);
-        const qty = parseInt(el.textContent);
-        total += harga * qty;
-      });
-      document.getElementById('totalAmount').textContent = total.toLocaleString('id-ID');
-    }
-
-    let selectedPayment = "";
-    document.querySelectorAll('.payment-method').forEach(img => {
+    paymentMethods.forEach(img => {
       img.addEventListener('click', function() {
-        document.querySelectorAll('.payment-method').forEach(el => {
+        // Reset semua style
+        paymentMethods.forEach(el => {
           el.classList.remove('selected');
-          el.style.transform = 'scale(1)';
         });
+
+        // Aktifkan yang dipilih
         this.classList.add('selected');
-        this.style.transform = 'scale(1.05)';
-        selectedPayment = this.dataset.method;
+        paymentInput.value = this.dataset.method; // Set value untuk hidden input
       });
     });
 
-    function prepareAndSubmit() {
-      const paketData = [];
-      document.querySelectorAll('.quantity-display').forEach((el, index) => {
-        paketData.push({
-          id: index,
-          qty: parseInt(el.textContent)
-        });
-      });
-
-      if (paketData.every(p => p.qty === 0)) {
-        tampilkanNotifikasi("Minimal pilih satu paket!", true);
-        return;
+    // Fungsi validasi form sebelum submit
+    function validateDonation() {
+      if (!paymentInput.value) {
+        tampilkanNotifikasi("Silakan pilih metode pembayaran terlebih dahulu.", true);
+        return false; // Mencegah form untuk submit
       }
-
-      if (!selectedPayment) {
-        tampilkanNotifikasi("Pilih metode pembayaran.", true);
-        return;
-      }
-
-      const total = parseInt(document.getElementById('totalAmount').textContent.replace(/\./g, ''));
-      const formData = new FormData();
-      formData.append('id_donasi', <?= $id ?>);
-      formData.append('metode', selectedPayment);
-      formData.append('total', total);
-      formData.append('paketData', JSON.stringify(paketData));
-
-      fetch('proses_transaksi_barang.php', {
-          method: 'POST',
-          body: formData
-        })
-        .then(response => response.text())
-        .then(result => tampilkanNotifikasi(result, !result.includes("berhasil")))
-        .catch(err => tampilkanNotifikasi("Gagal kirim data", true));
+      // Validasi lain (seperti jumlah) sudah ditangani oleh atribut `required` dan `min` pada input
+      return true; // Lanjutkan submit form
     }
 
+    // Fungsi notifikasi (diambil dari template)
     function tampilkanNotifikasi(pesan, isError) {
       const notif = document.getElementById('notifikasi');
       notif.style.display = 'block';
       notif.textContent = pesan;
-      notif.style.backgroundColor = isError ? '#f8d7da' : '#d4edda';
-      notif.style.color = isError ? '#721c24' : '#155724';
-      notif.style.border = isError ? '1px solid #f5c6cb' : '1px solid #c3e6cb';
-      setTimeout(() => notif.style.display = 'none', 5000);
+      notif.className = 'alert alert-dismissible fade show position-fixed w-100'; // reset classes
+      if (isError) {
+        notif.classList.add('alert-danger');
+      } else {
+        notif.classList.add('alert-success');
+      }
+
+      // Auto-hide a notification
+      setTimeout(() => {
+        notif.style.display = 'none';
+      }, 5000);
     }
   </script>
 </body>

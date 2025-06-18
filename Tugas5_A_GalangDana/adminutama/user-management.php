@@ -14,19 +14,23 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         $field = 'status_mitra';
         $table = 'mitra';
         $id_field = 'id_mitra';
+        $status_ban = 'nonactive';
+        $status_unban = 'active';
     } else {
         $field = 'status_user';
         $table = 'user';
         $id_field = 'id_user';
+        $status_ban = 'banned';
+        $status_unban = 'active';
     }
 
     if ($action === 'ban') {
-        $stmt = $conn->prepare("UPDATE $table SET $field = 'banned' WHERE $id_field = ?");
-        $stmt->bind_param("i", $id);
+        $stmt = $conn->prepare("UPDATE $table SET $field = ? WHERE $id_field = ?");
+        $stmt->bind_param("si", $status_ban, $id);
         $stmt->execute();
     } elseif ($action === 'unban') {
-        $stmt = $conn->prepare("UPDATE $table SET $field = 'active' WHERE $id_field = ?");
-        $stmt->bind_param("i", $id);
+        $stmt = $conn->prepare("UPDATE $table SET $field = ? WHERE $id_field = ?");
+        $stmt->bind_param("si", $status_unban, $id);
         $stmt->execute();
     }
 
@@ -95,7 +99,6 @@ if ($result->num_rows > 0) {
 
 <body>
     <?php include 'sidebar.php'; ?>
-
     <div class="main-content">
         <section class="py-5">
             <div class="container">
@@ -110,7 +113,7 @@ if ($result->num_rows > 0) {
 
                 <?php if (isset($_GET['msg'])): ?>
                     <div id="alertBox" class="alert alert-success">
-                        <?= $_GET['msg'] === 'ban' ? ucfirst($tipe) . ' berhasil dibanned!' : ucfirst($tipe) . ' berhasil diunban!' ?>
+                        <?= $_GET['msg'] === 'ban' ? ucfirst($tipe) . ' berhasil dinonaktifkan!' : ucfirst($tipe) . ' berhasil diaktifkan kembali!' ?>
                     </div>
                 <?php endif; ?>
 
@@ -133,7 +136,9 @@ if ($result->num_rows > 0) {
                                 <tbody>
                                     <?php if (!empty($items)): ?>
                                         <?php foreach ($items as $item):
-                                            $status = strtolower($item['status']); ?>
+                                            $status = strtolower($item['status']);
+                                            $isBanned = ($tipe === 'mitra') ? ($status === 'nonactive') : ($status === 'banned');
+                                        ?>
                                             <tr>
                                                 <td><?= htmlspecialchars($item['id']) ?></td>
                                                 <td><?= htmlspecialchars($item['nama']) ?></td>
@@ -141,17 +146,17 @@ if ($result->num_rows > 0) {
                                                 <td><?= htmlspecialchars($item['no_telepon']) ?></td>
                                                 <td><?= htmlspecialchars($item['alamat']) ?></td>
                                                 <td>
-                                                    <span class="status-badge <?= $status === 'banned' ? 'banned-true' : 'banned-false' ?>">
-                                                        <?= ucfirst($status) ?>
+                                                    <span class="status-badge <?= $isBanned ? 'banned-true' : 'banned-false' ?>">
+                                                        <?= $isBanned ? ($tipe === 'mitra' ? 'Nonaktif' : 'Banned') : 'Aktif' ?>
                                                     </span>
                                                 </td>
                                                 <td><?= date('d M Y', strtotime($item['bergabung'])) ?></td>
                                                 <td>
-                                                    <a href="?tipe=<?= $tipe ?>&action=<?= $status === 'banned' ? 'unban' : 'ban' ?>&id=<?= $item['id'] ?>"
-                                                        class="btn btn-sm <?= $status === 'banned' ? 'btn-success' : 'btn-danger' ?>"
-                                                        onclick="return confirm('Are you sure?')">
-                                                        <i class="fas <?= $status === 'banned' ? 'fa-unlock' : 'fa-ban' ?>"></i>
-                                                        <?= $status === 'banned' ? 'Unban' : 'Ban' ?>
+                                                    <a href="?tipe=<?= $tipe ?>&action=<?= $isBanned ? 'unban' : 'ban' ?>&id=<?= $item['id'] ?>"
+                                                        class="btn btn-sm <?= $isBanned ? 'btn-success' : 'btn-danger' ?>"
+                                                        onclick="return confirm('Apakah Anda yakin ingin <?= $isBanned ? 'mengaktifkan kembali' : 'menonaktifkan' ?> akun ini?')">
+                                                        <i class="fas <?= $isBanned ? 'fa-unlock' : 'fa-ban' ?>"></i>
+                                                        <?= $isBanned ? 'Unban' : 'Ban' ?>
                                                     </a>
                                                 </td>
                                             </tr>

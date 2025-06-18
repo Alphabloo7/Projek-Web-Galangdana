@@ -1,5 +1,8 @@
 <?php
 session_start();
+include 'koneksi.php';
+include 'navbar.php';
+    require_once 'pages/auth/keamanan.php';  
 ?>
 
 <!DOCTYPE html>
@@ -26,67 +29,7 @@ session_start();
 
 <body>
 
-    <!-- Start navbar -->
-    <nav class="navbar navbar-expand-lg navbar-custom">
-        <div class="container">
-            <!-- Logo -->
-            <a class="navbar-brand d-flex align-items-center">
-                <img src="images/logo-navbar.png" alt="Logo" width="150" height="auto">
-            </a>
-            <!-- Toggle Button (Mobile) -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <!-- Links -->
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#about-us">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#open-donations">Donate</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#how-to-donate">How to Donate</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#documentation">Documentation</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="pages/donasi/form-donasi.php">Form Donate</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="form-documentation.php">Form Documentation</a>
-                    </li>
-                </ul>
 
-                <!-- Login & Sign Up -->
-                <?php if (isset($_SESSION['nama'])): ?>
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle me-2"></i> <?= htmlspecialchars($_SESSION['nama']); ?>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                            <li>
-                                <h6 class="dropdown-header">Halo, <?= htmlspecialchars($_SESSION['nama']); ?>!</h6>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="pages/user/profile.php"><i class="fas fa-user-edit me-2"></i> Profile</a></li>
-                            <li><a class="dropdown-item text-danger" href="pages/auth/logout.php"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
-                        </ul>
-                    </div>
-                <?php else: ?>
-                    <a href="pages/auth/login.php" class="btn btn-warning me-2">Login</a> <a href="pages/auth/SignupUser.php" class="btn btn-primary">Sign Up</a>
-                <?php endif; ?>
-            </div>
-        </div>
-    </nav>
-    <!-- End Navbar -->
 
     <!-- Start Hero Section -->
     <div class="container-fluid hero position-relative text-center">
@@ -184,26 +127,26 @@ session_start();
                 $fullDescription = $description;
                 return "
     <div class='col'>
-      <div class='card shadow-sm' style='min-height: 500px;'>
-        <img src='$image' class='card-img-top img-fixed' alt='Gambar Deskripsi'>
-        <div class='card-body'>
-          <div class='d-flex justify-content-between'>
-            <small class='text-muted'>$date</small>
-            <a href='#' class='text-primary text-decoration-none fw-bold'>{$donationCount} donations</a>
-          </div>
-          <h5 class='fw-bold text-dark mt-1'>$title</h5>
-          <p class='card-text short-description'>$shortDescription</p>
-          <p class='card-text full-description' style='display: none;'>$fullDescription</p>
-          <button class='btn btn-sm btn-outline-secondary toggle-description'>Baca Selengkapnya</button>
-          <div class='d-flex justify-content-between align-items-center mt-3'>
-            <div class='btn-group'>
-            <a href='pages/donasi/detail-donasi.php?id=" . htmlspecialchars($id) . "' class='btn btn-sm btn-outline-success'>Donate</a>
-                    </div>
-            <small class='text-body-secondary'>$timeAgo</small>
-          </div>
+  <div class='card shadow-sm' style='min-height: 500px;'>
+    <img src='$image' class='card-img-top img-fixed' alt='Gambar Deskripsi'>
+    <div class='card-body'>
+      <div class='d-flex justify-content-between'>
+        <small class='text-muted'>$date</small>
+        <a href='#' class='text-primary text-decoration-none fw-bold'>{$donationCount} donations</a>
+      </div>
+      <h5 class='fw-bold text-dark mt-1'>$title</h5>
+      <p class='card-text short-description'>$shortDescription</p>
+      <p class='card-text full-description' style='display: none;'>$fullDescription</p>
+      <button class='btn btn-sm btn-outline-secondary toggle-description'>Baca Selengkapnya</button>
+      <div class='d-flex justify-content-between align-items-center mt-3'>
+        <div class='btn-group'>
+          <a href='percobaan.php?id=$id' class='btn btn-sm btn-outline-success text-decoration-none'>Donate</a>
         </div>
+        <small class='text-body-secondary'>$timeAgo</small>
       </div>
     </div>
+  </div>
+</div>
   ";
             }
 

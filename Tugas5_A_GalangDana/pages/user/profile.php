@@ -1,17 +1,21 @@
 <?php
 session_start();
-
+// Sertakan file koneksi database Anda
+// Pastikan path ini benar relatif terhadap lokasi file profile.php
 include '../../koneksi.php';
 
-
+// Periksa apakah pengguna sudah login
+// Jika belum, arahkan kembali ke halaman login
 if (!isset($_SESSION['id_user'])) {
-    header("Location: .../auth/Login.php"); 
+    header("Location: .../auth/Login.php"); // Sesuaikan path ke halaman login Anda
+    exit();
 }
 
 $id_user = $_SESSION['id_user'];
 $nama = $email = $password_hash = $no_telepon = $alamat = $username = "";
 $error = $success = "";
 
+// Ambil pesan sukses atau error dari session (jika ada setelah submit form)
 if (isset($_SESSION['success_message'])) {
     $success = $_SESSION['success_message'];
     unset($_SESSION['success_message']); // Hapus pesan setelah ditampilkan
@@ -21,8 +25,10 @@ if (isset($_SESSION['error_message'])) {
     unset($_SESSION['error_message']); // Hapus pesan setelah ditampilkan
 }
 
-
+// --- Ambil data profil pengguna dari database ---
 try {
+    // Siapkan query untuk mengambil data pengguna
+    // Sesuaikan nama kolom tabel 'users' Anda jika berbeda
     $stmt = $conn->prepare("SELECT nama, email, password, no_telepon, alamat, username FROM user WHERE id_user = ?");
     if (!$stmt) {
         throw new Exception("Gagal menyiapkan statement: " . $conn->error);
@@ -35,6 +41,7 @@ try {
         $row = $result->fetch_assoc();
         $nama = htmlspecialchars($row['nama']);
         $email = htmlspecialchars($row['email']);
+        // Password hash tidak akan ditampilkan di form, hanya untuk validasi backend
         $password_hash = htmlspecialchars($row['password']);
         $no_telepon = htmlspecialchars($row['no_telepon']);
         $alamat = htmlspecialchars($row['alamat']);
@@ -51,7 +58,9 @@ try {
 // --- Ambil data riwayat donasi pengguna dari database ---
 $riwayat_donasi = [];
 try {
-
+    // Asumsi: Anda memiliki tabel 'donasi_users' yang menghubungkan pengguna dengan donasi,
+    // dan tabel 'donasi' yang berisi detail kampanye donasi.
+    // Sesuaikan nama tabel dan kolom sesuai skema database Anda.
     $stmt_donasi = $conn->prepare("
         SELECT d.judul_donasi, du.jumlah_donasi, du.tanggal_donasi
         FROM transaksi du
@@ -74,6 +83,27 @@ try {
     $stmt_donasi->close();
 } catch (Exception $e) {
     $error = "Terjadi kesalahan saat mengambil riwayat donasi: " . $e->getMessage();
+}
+//Ambil riwayat laporan dari database
+$riwayat_laporan = [];
+try {
+    $stmt_laporan = $conn->prepare("
+        SELECT judul_laporan, isi_laporan, tgl_laporan, status_laporan, bukti_laporan
+        FROM laporan
+        WHERE id_user = ?
+        ORDER BY tgl_laporan DESC
+    ");
+    $stmt_laporan->bind_param("i", $id_user);
+    $stmt_laporan->execute();
+    $result_laporan = $stmt_laporan->get_result();
+
+    while ($row_laporan = $result_laporan->fetch_assoc()) {
+        $riwayat_laporan[] = $row_laporan;
+    }
+
+    $stmt_laporan->close();
+} catch (Exception $e) {
+    $error = "Terjadi kesalahan saat mengambil riwayat laporan: " . $e->getMessage();
 }
 
 // Tutup koneksi database setelah semua data diambil
@@ -229,6 +259,11 @@ $conn->close();
                         <i class="fas fa-history me-2"></i> Riwayat Donasi
                     </button>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="report-history-tab" data-bs-toggle="tab" data-bs-target="#report-history" type="button" role="tab" aria-controls="report-history" aria-selected="false">
+                        <i class="fas fa-file-alt me-2"></i> Riwayat Laporan
+                    </button>
+                </li>
             </ul>
 
             <!-- Konten Tabs -->
@@ -296,6 +331,56 @@ $conn->close();
                     <?php else: ?>
                         <div class="alert alert-info text-center" role="alert">
                             Anda belum memiliki riwayat donasi. Yuk, mulai berdonasi!
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Tab Pane : Riwayat Laporan -->
+                <div class="tab-pane fade" id="report-history" role="tabpanel" aria-labelledby="report-history-tab">
+                    <h4 class="mb-4">Daftar Riwayat Laporan Anda</h4>
+                    <?php if (!empty($riwayat_laporan)): ?>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Judul</th>
+                                        <th>Isi</th>
+                                        <th>Tanggal</th>
+                                        <th>Bukti</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php $no = 1;
+                                    foreach ($riwayat_laporan as $laporan): ?>
+                                        <tr>
+                                            <td><?= $no++; ?></td>
+                                            <td><?= htmlspecialchars($laporan['judul_laporan']); ?></td>
+                                            <td><?= htmlspecialchars($laporan['isi_laporan']); ?></td>
+                                            <td><?= date('d M Y', strtotime($laporan['tgl_laporan'])); ?></td>
+                                            <td>
+                                                <?php if (!empty($laporan['bukti_laporan'])): ?>
+                                                    <a href="..\..\uploads_bukti/<?= htmlspecialchars($laporan['bukti_laporan']) ?>" target="_blank">Lihat Bukti</a>
+                                                <?php else: ?>
+                                                    <span class="text-muted">-</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-<?=
+                                                                        $laporan['status_laporan'] == 'Resolved' ? 'success' : 'secondary'
+                                                                        ?>">
+                                                    <?= htmlspecialchars($laporan['status_laporan']); ?>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <div class="alert alert-info text-center" role="alert">
+                            Anda belum memiliki riwayat laporan.
                         </div>
                     <?php endif; ?>
                 </div>
