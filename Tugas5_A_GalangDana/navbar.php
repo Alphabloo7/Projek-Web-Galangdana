@@ -1,6 +1,6 @@
 <?php
 // It's good practice to have session_start() at the very top of your file.
-session_start();
+//session_start();
 ?>
 
 <!-- GILANGGGGGGGGGGGGGGGGG -->

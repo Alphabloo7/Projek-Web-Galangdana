@@ -2,7 +2,7 @@
 session_start();
 include 'koneksi.php';
 include 'navbar.php';
-    require_once 'pages/auth/keamanan.php';  
+require_once 'pages/auth/keamanan.php';
 ?>
 
 <!DOCTYPE html>
@@ -140,7 +140,7 @@ include 'navbar.php';
       <button class='btn btn-sm btn-outline-secondary toggle-description'>Baca Selengkapnya</button>
       <div class='d-flex justify-content-between align-items-center mt-3'>
         <div class='btn-group'>
-          <a href='percobaan.php?id=$id' class='btn btn-sm btn-outline-success text-decoration-none'>Donate</a>
+          <a href='pages/donasi/detail-donasi.php?id=$id' class='btn btn-sm btn-outline-success text-decoration-none'>Donate</a>
         </div>
         <small class='text-body-secondary'>$timeAgo</small>
       </div>
